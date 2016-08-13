@@ -95,14 +95,12 @@ public class ReorderController: NSObject {
         guard case .Ready = reorderState else { return }
         guard let tableView = tableView, sourceRow = tableView.indexPathForRowAtPoint(point) else { return }
         
-        // Make sure this row is reorderable
         guard delegate?.tableView?(tableView, canReorderRowAtIndexPath: sourceRow) != false else { return }
         
-        // Create snapshot view
         createSnapshotViewForCellAtIndexPath(sourceRow)
         animateSnapshotViewIn()
+        activateAutoScrollDisplayLink()
         
-        // Update state
         let snapshotOffset = snapshotView.flatMap { $0.center.y - point.y } ?? 0
         reorderState = .Reordering(
             sourceRow: sourceRow,
@@ -110,15 +108,10 @@ public class ReorderController: NSObject {
             snapshotOffset: snapshotOffset
         )
         
-        // Reload the source row
         UIView.performWithoutAnimation {
             tableView.reloadRowsAtIndexPaths([sourceRow], withRowAnimation: .None)
         }
         
-        // Activate the auto scroll display link
-        activateAutoScrollDisplayLink()
-        
-        // Notify the delegate
         delegate?.tableViewDidBeginReordering?(tableView)
     }
     
@@ -126,10 +119,7 @@ public class ReorderController: NSObject {
         guard case let .Reordering(_, _, snapshotOffset) = reorderState else { return }
         guard let snapshotView = snapshotView else { return }
         
-        // Update snapshot view
         snapshotView.center.y = point.y + snapshotOffset
-        
-        // Update destination row
         updateDestinationRow()
     }
     
@@ -137,10 +127,8 @@ public class ReorderController: NSObject {
         guard case let .Reordering(_, destinationRow, _) = reorderState else { return }
         guard let tableView = tableView else { return }
         
-        // Update state
         reorderState = .Ready(snapshotRow: destinationRow)
         
-        // Get the rect
         let rect = tableView.rectForRowAtIndexPath(destinationRow)
         let rectCenter = CGPoint(x: rect.midX, y: rect.midY)
         
@@ -150,7 +138,6 @@ public class ReorderController: NSObject {
             snapshotView?.center.y += 0.1
         }
         
-        // Animate snapshot view to its destination
         UIView.animateWithDuration(animationDuration, animations: {
             self.snapshotView?.center = CGPoint(x: rect.midX, y: rect.midY)
         }, completion: { finished in
@@ -165,21 +152,36 @@ public class ReorderController: NSObject {
             }
         })
         animateSnapshotViewOut()
-        
-        // Clear display link
         clearAutoScrollDisplayLink()
         
-        // Notify delegate
         delegate?.tableViewDidFinishReordering?(tableView)
     }
     
     // MARK: - Destination row
     
-    func updateDestinationRow() {
+    private func updateDestinationRow() {
         guard case let .Reordering(sourceRow, destinationRow, snapshotOffset) = reorderState else { return }
-        guard let tableView = tableView, snapshotView = snapshotView else { return }
+        guard let tableView = tableView else { return }
         
-        // Calculate snapping distances for rows
+        guard let newDestinationRow = newDestinationRow() where newDestinationRow != destinationRow else { return }
+        
+        reorderState = .Reordering(
+            sourceRow: sourceRow,
+            destinationRow: newDestinationRow,
+            snapshotOffset: snapshotOffset
+        )
+        delegate?.tableView(tableView, reorderRowAtIndexPath: destinationRow, toIndexPath: newDestinationRow)
+        
+        tableView.beginUpdates()
+        tableView.deleteRowsAtIndexPaths([destinationRow], withRowAnimation: .Fade)
+        tableView.insertRowsAtIndexPaths([newDestinationRow], withRowAnimation: .Fade)
+        tableView.endUpdates()
+    }
+    
+    private func newDestinationRow() -> NSIndexPath? {
+        guard case let .Reordering(_, destinationRow, _) = reorderState else { return nil }
+        guard let tableView = tableView, snapshotView = snapshotView else { return nil }
+        
         let rowSnapDistances = tableView.indexPathsForVisibleRows?.map { path -> (path: NSIndexPath, distance: CGFloat) in
             let rect = tableView.rectForRowAtIndexPath(path)
             
@@ -190,7 +192,6 @@ public class ReorderController: NSObject {
             }
         } ?? []
         
-        // Calculate snapping distances for section thresholds
         let sectionSnapDistances = (0..<tableView.numberOfSections).flatMap { section -> (path: NSIndexPath, distance: CGFloat)? in
             if section > destinationRow.section {
                 let rect = tableView.rectForRowAtIndexPath(NSIndexPath(forRow: 0, inSection: section))
@@ -208,27 +209,8 @@ public class ReorderController: NSObject {
             }
         }
         
-        // Find the row we should snap to
         let snapDistances = (rowSnapDistances + sectionSnapDistances).filter { delegate?.tableView?(tableView, canReorderRowAtIndexPath: $0.path) != false }
-        guard let newDestinationRow = snapDistances.minElement({ $0.distance < $1.distance })?.path else { return }
-        
-        guard newDestinationRow != destinationRow else { return }
-        
-        // Update state
-        reorderState = .Reordering(
-            sourceRow: sourceRow,
-            destinationRow: newDestinationRow,
-            snapshotOffset: snapshotOffset
-        )
-        
-        // Notify the delegate
-        delegate?.tableView(tableView, reorderRowAtIndexPath: destinationRow, toIndexPath: newDestinationRow)
-        
-        // Update table view
-        tableView.beginUpdates()
-        tableView.deleteRowsAtIndexPaths([destinationRow], withRowAnimation: .Fade)
-        tableView.insertRowsAtIndexPaths([newDestinationRow], withRowAnimation: .Fade)
-        tableView.endUpdates()
+        return snapDistances.minElement({ $0.distance < $1.distance })?.path
     }
     
     // MARK: - Snapshot view
@@ -256,8 +238,8 @@ public class ReorderController: NSObject {
         snapshotView.layer.shadowRadius = shadowRadius
         snapshotView.layer.shadowOffset = shadowOffset
         
-        self.snapshotView = snapshotView
         tableView?.addSubview(snapshotView)
+        self.snapshotView = snapshotView
     }
     
     private func removeSnapshotView() {
@@ -352,13 +334,13 @@ public class ReorderController: NSObject {
     
     // MARK: - Auto scrolling
     
-    func activateAutoScrollDisplayLink() {
+    private func activateAutoScrollDisplayLink() {
         autoScrollDisplayLink = CADisplayLink(target: self, selector: #selector(handleDisplayLinkUpdate))
         autoScrollDisplayLink?.addToRunLoop(NSRunLoop.mainRunLoop(), forMode: NSDefaultRunLoopMode)
         lastTimeStamp = nil
     }
     
-    func clearAutoScrollDisplayLink() {
+    private func clearAutoScrollDisplayLink() {
         autoScrollDisplayLink?.invalidate()
         autoScrollDisplayLink = nil
         lastTimeStamp = nil
@@ -371,23 +353,18 @@ public class ReorderController: NSObject {
             let scrollVelocity = autoScrollVelocity()
             
             if scrollVelocity != 0 {
-                // Determine how far we should scroll this frame
                 let elapsedTime = displayLink.timestamp - lastTimeStamp
                 let scrollDelta = CGFloat(elapsedTime) * scrollVelocity
                 
-                // Set content offset
                 let oldOffset = tableView.contentOffset
                 tableView.setContentOffset(CGPoint(x: oldOffset.x, y: oldOffset.y + CGFloat(scrollDelta)), animated: false)
                 
-                // Make sure we're not scrolling past content bounds
                 tableView.contentOffset.y = min(tableView.contentOffset.y, tableView.contentSize.height + tableView.contentInset.bottom - tableView.frame.height)
                 tableView.contentOffset.y = max(tableView.contentOffset.y, -tableView.contentInset.top)
                 
-                // Update snapshot view
                 let actualScrollDistance = tableView.contentOffset.y - oldOffset.y
                 snapshotView.frame.origin.y += actualScrollDistance
                 
-                // Update the destination row
                 updateDestinationRow()
             }
         }
