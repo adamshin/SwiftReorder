@@ -34,8 +34,7 @@ public class ReorderController: NSObject {
         case Reordering(sourceRow: NSIndexPath, destinationRow: NSIndexPath, snapshotOffset: CGFloat)
     }
     
-    weak var tableView: UITableView?
-    weak var delegate: TableViewReorderDelegate?
+    private weak var tableView: UITableView?
     
     private var reorderState: ReorderState = .Ready(snapshotRow: nil)
     private var snapshotView: UIView? = nil
@@ -50,6 +49,8 @@ public class ReorderController: NSObject {
         return gestureRecognizer
     }()
     
+    public weak var delegate: TableViewReorderDelegate?
+    
     public var longPressDuration: NSTimeInterval = 0.3
     public var animationDuration: NSTimeInterval = 0.2
     public var cellOpacity: CGFloat = 1
@@ -62,11 +63,10 @@ public class ReorderController: NSObject {
     
     // MARK: - Lifecycle
     
-    init(tableView: UITableView, delegate: TableViewReorderDelegate?) {
+    init(tableView: UITableView) {
         super.init()
         
         self.tableView = tableView
-        self.delegate = delegate
         tableView.addGestureRecognizer(reorderGestureRecognizer)
         
         reorderState = .Ready(snapshotRow: nil)

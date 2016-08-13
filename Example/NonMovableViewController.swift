@@ -45,7 +45,7 @@ class NonMovableViewController: UITableViewController {
         
         tableView.registerClass(UITableViewCell.self, forCellReuseIdentifier: "cell")
         tableView.allowsSelection = false
-        tableView.reorderDelegate = self
+        tableView.reorder.delegate = self
     }
     
 }
@@ -65,7 +65,7 @@ extension NonMovableViewController {
     }
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        if let spacer = tableView.spacerCellForIndexPath(indexPath) {
+        if let spacer = tableView.reorder.spacerCellForIndexPath(indexPath) {
             return spacer
         }
         

@@ -5,17 +5,17 @@ SwiftReorder adds drag-and-drop reordering to any table view with just a few lin
 Copy the contents of the `Source` folder into your project.
 
 ## Usage
-Add the following line to your table view setup.
+* Add the following line to your table view setup.
 ```swift
-tableView.reorderDelegate = self
+tableView.reorder.delegate = self
 ```
-Add this code to the beginning of your `tableView(_:cellForRowAtIndexPath:)`.
+* Add this code to the beginning of your `tableView(_:cellForRowAtIndexPath:)`.
 ```swift
-if let spacer = tableView.spacerCellForIndexPath(indexPath) {
+if let spacer = tableView.reorder.spacerCellForIndexPath(indexPath) {
     return spacer
 }
 ```
-Implement this `TableViewReorderDelegate` method, and others as necessary.
+* Implement this `TableViewReorderDelegate` method, and others as necessary.
 ```swift
 tableView(_:reorderRowAtIndexPath:toIndexPath:)
 ```
@@ -23,10 +23,10 @@ tableView(_:reorderRowAtIndexPath:toIndexPath:)
 ## Customization
 SwiftReorder exposes several properties on `UITableView` for adjusting the style of the reordering effect. For example, you can add a scaling effect to the selected cell:
 ```swift
-tableView.reorderCellScale = 1.05
+tableView.reorder.cellScale = 1.05
 ```
 Or adjust the shadow:
 ```swift
-tableView.reorderShadowOpacity = 0.5
-tableView.reorderShadowRadius = 20
+tableView.reorder.shadowOpacity = 0.5
+tableView.reorder.shadowRadius = 20
 ```

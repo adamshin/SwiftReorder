@@ -73,7 +73,7 @@ class DynamicHeightViewController: UITableViewController {
         tableView.allowsSelection = false
         tableView.rowHeight = UITableViewAutomaticDimension
         tableView.estimatedRowHeight = 44
-        tableView.reorderDelegate = self
+        tableView.reorder.delegate = self
     }
     
 }
@@ -85,7 +85,7 @@ extension DynamicHeightViewController {
     }
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        if let spacer = tableView.spacerCellForIndexPath(indexPath) {
+        if let spacer = tableView.reorder.spacerCellForIndexPath(indexPath) {
             return spacer
         }
         
