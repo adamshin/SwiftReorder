@@ -262,7 +262,7 @@
 			buildSettings = {
 				INFOPLIST_FILE = Example/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = adamjshin.SwiftReorder;
+				PRODUCT_BUNDLE_IDENTIFIER = adamshin.SwiftReorder;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -272,7 +272,7 @@
 			buildSettings = {
 				INFOPLIST_FILE = Example/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = adamjshin.SwiftReorder;
+				PRODUCT_BUNDLE_IDENTIFIER = adamshin.SwiftReorder;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
