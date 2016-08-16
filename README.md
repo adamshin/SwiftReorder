@@ -1,10 +1,40 @@
 # SwiftReorder
+
 SwiftReorder adds drag-and-drop reordering to any table view with just a few lines of code. It's robust, lightweight, and completely customizable.
 
 ## Installation
-Copy the contents of the `Source` folder into your project.
+
+### CocoaPods
+
+[CocoaPods](http://cocoapods.org) is a dependency manager for Cocoa projects. You can install it with the following command:
+
+```bash
+$ gem install cocoapods
+```
+
+To integrate SwiftReorder into your Xcode project using CocoaPods, specify it in your `Podfile`:
+
+```ruby
+use_frameworks!
+target '<Your Target Name>' do
+    pod 'SwiftReorder', '~> 1.0'
+end
+```
+
+Then, run the following command:
+
+```bash
+$ pod install
+```
+
+### Manually
+
+You can integrate SwiftReorder into your project manually by copying the contents of the `Source` folder into your project.
 
 ## Usage
+
+### Setup
+
 * Add the following line to your table view setup.
 ```swift
 tableView.reorder.delegate = self
@@ -20,8 +50,8 @@ if let spacer = tableView.reorder.spacerCellForIndexPath(indexPath) {
 tableView(_:reorderRowAtIndexPath:toIndexPath:)
 ```
 
-## Customization
-SwiftReorder exposes several properties on `UITableView` for adjusting the style of the reordering effect. For example, you can add a scaling effect to the selected cell:
+### Customization
+SwiftReorder exposes several properties for adjusting the style of the reordering effect. For example, you can add a scaling effect to the selected cell:
 ```swift
 tableView.reorder.cellScale = 1.05
 ```
