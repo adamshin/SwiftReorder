@@ -6,25 +6,10 @@ SwiftReorder adds drag-and-drop reordering to any table view with just a few lin
 
 ### CocoaPods
 
-[CocoaPods](http://cocoapods.org) is a dependency manager for Cocoa projects. You can install it with the following command:
-
-```bash
-$ gem install cocoapods
-```
-
 To integrate SwiftReorder into your Xcode project using CocoaPods, specify it in your `Podfile`:
 
 ```ruby
-use_frameworks!
-target '<Your Target Name>' do
-    pod 'SwiftReorder', '~> 1.0'
-end
-```
-
-Then, run the following command:
-
-```bash
-$ pod install
+pod 'SwiftReorder', '~> 1.0'
 ```
 
 ### Manually
