@@ -8,6 +8,6 @@ Pod::Spec.new do |s|
   
   s.platform = :ios, '8.0'
   
-  s.source = { :git => 'https://github.com/adamshin/SwiftReorder.git', :tag => s.version, :branch => 'pod' }
+  s.source = { :git => 'https://github.com/adamshin/SwiftReorder.git', :tag => s.version.to_s }
   s.source_files = 'Source/*.swift'
 end
