@@ -101,17 +101,15 @@ public class ReorderController: NSObject {
         animateSnapshotViewIn()
         activateAutoScrollDisplayLink()
         
+        tableView.reloadData()
+        
         let snapshotOffset = snapshotView.flatMap { $0.center.y - point.y } ?? 0
         reorderState = .Reordering(
             sourceRow: sourceRow,
             destinationRow: sourceRow,
             snapshotOffset: snapshotOffset
         )
-        
-        UIView.performWithoutAnimation {
-            tableView.reloadRowsAtIndexPaths([sourceRow], withRowAnimation: .None)
-        }
-        
+
         delegate?.tableViewDidBeginReordering?(tableView)
     }
     
@@ -193,18 +191,31 @@ public class ReorderController: NSObject {
         } ?? []
         
         let sectionSnapDistances = (0..<tableView.numberOfSections).flatMap { section -> (path: NSIndexPath, distance: CGFloat)? in
+            let rowsInSection = tableView.numberOfRowsInSection(section)
+            
             if section > destinationRow.section {
-                let rect = tableView.rectForRowAtIndexPath(NSIndexPath(forRow: 0, inSection: section))
+                let rect: CGRect
+                if rowsInSection == 0 {
+                    rect = rectForEmptySection(section)
+                } else {
+                    rect = tableView.rectForRowAtIndexPath(NSIndexPath(forRow: 0, inSection: section))
+                }
+
                 let path = NSIndexPath(forRow: 0, inSection: section)
-                
                 return (path, abs(snapshotView.frame.maxY - rect.minY))
-            } else if section < destinationRow.section {
-                let rowsInSection = tableView.numberOfRowsInSection(section)
-                let rect = tableView.rectForRowAtIndexPath(NSIndexPath(forRow: rowsInSection - 1, inSection: section))
-                let path = NSIndexPath(forRow: rowsInSection, inSection: section)
+            }
+            else if section < destinationRow.section {
+                let rect: CGRect
+                if rowsInSection == 0 {
+                    rect = rectForEmptySection(section)
+                } else {
+                    rect = tableView.rectForRowAtIndexPath(NSIndexPath(forRow: rowsInSection - 1, inSection: section))
+                }
                 
+                let path = NSIndexPath(forRow: rowsInSection, inSection: section)
                 return (path, abs(snapshotView.frame.minY - rect.maxY))
-            } else {
+            }
+            else {
                 return nil
             }
         }
@@ -213,13 +224,20 @@ public class ReorderController: NSObject {
         return snapDistances.minElement({ $0.distance < $1.distance })?.path
     }
     
+    private func rectForEmptySection(section: Int) -> CGRect {
+        guard let tableView = tableView else { return .zero }
+        
+        let sectionRect = tableView.rectForHeaderInSection(section)
+        return UIEdgeInsetsInsetRect(sectionRect, UIEdgeInsets(top: sectionRect.height, left: 0, bottom: 0, right: 0))
+    }
+    
     // MARK: - Snapshot view
     
     private func createSnapshotViewForCellAtIndexPath(indexPath: NSIndexPath) {
-        guard let cell = tableView?.cellForRowAtIndexPath(indexPath) else { return }
-        
         removeSnapshotView()
-        tableView?.reloadRowsAtIndexPaths([indexPath], withRowAnimation: .None)
+        self.tableView?.reloadData()
+
+        guard let cell = tableView?.cellForRowAtIndexPath(indexPath) else { return }
         
         UIGraphicsBeginImageContextWithOptions(cell.bounds.size, false, 0)
         cell.layer.renderInContext(UIGraphicsGetCurrentContext()!)
