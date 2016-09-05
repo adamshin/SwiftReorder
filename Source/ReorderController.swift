@@ -45,13 +45,17 @@ public class ReorderController: NSObject {
     private lazy var reorderGestureRecognizer: UILongPressGestureRecognizer = {
         let gestureRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(handleReorderGesture))
         gestureRecognizer.delegate = self
-        gestureRecognizer.minimumPressDuration = 0.3
+        gestureRecognizer.minimumPressDuration = self.longPressDuration
         return gestureRecognizer
     }()
     
     public weak var delegate: TableViewReorderDelegate?
     
-    public var longPressDuration: NSTimeInterval = 0.3
+    public var longPressDuration: NSTimeInterval = 0.3 {
+        didSet {
+            reorderGestureRecognizer.minimumPressDuration = longPressDuration
+        }
+    }
     public var animationDuration: NSTimeInterval = 0.2
     public var cellOpacity: CGFloat = 1
     public var cellScale: CGFloat = 1
