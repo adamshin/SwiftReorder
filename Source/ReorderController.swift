@@ -40,11 +40,32 @@ public enum ReorderSpacerCellStyle {
  */
 @objc public protocol TableViewReorderDelegate: class {
     
+    /**
+     Tells the delegate that the user has moved a row from one location to another. Use this method to update your data source.
+     - Parameter tableView: The table view requesting this action.
+     - Parameter sourceIndexPath: The index path of the row to be moved.
+     - Parameter destinationIndexPath: The index path of the row's new location.
+     */
     func tableView(tableView: UITableView, reorderRowAtIndexPath sourceIndexPath: NSIndexPath, toIndexPath destinationIndexPath: NSIndexPath)
     
-    optional func tableViewDidBeginReordering(tableView: UITableView)
-    optional func tableViewDidFinishReordering(tableView: UITableView)
+    /**
+     Asks the reorder delegate whether a given row can be moved.
+     - Parameter tableView: The table view requesting this information.
+     - Parameter indexPath: The index path of a row.
+     */
     optional func tableView(tableView: UITableView, canReorderRowAtIndexPath indexPath: NSIndexPath) -> Bool
+    
+    /**
+     Tells the delegate that the user has begun reordering a row.
+     - Parameter tableView: The table view providing this information.
+     */
+    optional func tableViewDidBeginReordering(tableView: UITableView)
+    
+    /**
+     Tells the delegate that the user has finished reordering.
+     - Parameter tableView: The table view providing this information.
+     */
+    optional func tableViewDidFinishReordering(tableView: UITableView)
     
 }
 
@@ -55,7 +76,7 @@ public class ReorderController: NSObject {
     
     // MARK: - Public interface
     
-    /// The delegate of the reorder controller. This object must adopt the `TableViewReorderDelegate` protocol.
+    /// The delegate of the reorder controller.
     public weak var delegate: TableViewReorderDelegate?
     
     public var longPressDuration: NSTimeInterval = 0.3 {
@@ -192,7 +213,7 @@ public class ReorderController: NSObject {
     /**
      Returns a `UITableViewCell` if the table view should display a spacer cell at the given index path.
      
-     Call this method at the beginning of your `tableView(_:cellForRowAtIndexPath:)`, like so:
+     Use this method at the beginning of your `tableView(_:cellForRowAtIndexPath:)`, like so:
      ```
      func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
          if let spacer = tableView.reorder.spacerCellForIndexPath(indexPath) {
