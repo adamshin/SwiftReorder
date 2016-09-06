@@ -21,34 +21,41 @@
 //
 
 import UIKit
-import QuartzCore
 
+/**
+ The style of the reorder spacer cell. Determines whether the cell separator line is visible.
+ 
+ - Automatic: The style is determined based on the table view's style (plain or grouped).
+ - Hidden: The spacer cell is hidden, and the separator line is not visible.
+ - Transparent: The spacer cell is given a transparent background color, and the separator line is visible.
+ */
+public enum ReorderSpacerCellStyle {
+    case Automatic
+    case Hidden
+    case Transparent
+}
+
+/**
+ The delegate of a `ReorderController` must adopt the `TableViewReorderDelegate` protocol. This protocol defines methods for handling the reordering of rows.
+ */
+@objc public protocol TableViewReorderDelegate: class {
+    
+    func tableView(tableView: UITableView, reorderRowAtIndexPath sourceIndexPath: NSIndexPath, toIndexPath destinationIndexPath: NSIndexPath)
+    
+    optional func tableViewDidBeginReordering(tableView: UITableView)
+    optional func tableViewDidFinishReordering(tableView: UITableView)
+    optional func tableView(tableView: UITableView, canReorderRowAtIndexPath indexPath: NSIndexPath) -> Bool
+    
+}
+
+/**
+ An object that manages drag-and-drop reordering of table view cells.
+ */
 public class ReorderController: NSObject {
     
-    private let autoScrollThreshold: CGFloat = 30
-    private let autoScrollMinVelocity: CGFloat = 60
-    private let autoScrollMaxVelocity: CGFloat = 280
+    // MARK: - Public interface
     
-    private enum ReorderState {
-        case Ready(snapshotRow: NSIndexPath?)
-        case Reordering(sourceRow: NSIndexPath, destinationRow: NSIndexPath, snapshotOffset: CGFloat)
-    }
-    
-    private weak var tableView: UITableView?
-    
-    private var reorderState: ReorderState = .Ready(snapshotRow: nil)
-    private var snapshotView: UIView? = nil
-    
-    private var autoScrollDisplayLink: CADisplayLink?
-    private var lastTimeStamp: CFTimeInterval?
-    
-    private lazy var reorderGestureRecognizer: UILongPressGestureRecognizer = {
-        let gestureRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(handleReorderGesture))
-        gestureRecognizer.delegate = self
-        gestureRecognizer.minimumPressDuration = self.longPressDuration
-        return gestureRecognizer
-    }()
-    
+    /// The delegate of the reorder controller. This object must adopt the `TableViewReorderDelegate` protocol.
     public weak var delegate: TableViewReorderDelegate?
     
     public var longPressDuration: NSTimeInterval = 0.3 {
@@ -56,14 +63,52 @@ public class ReorderController: NSObject {
             reorderGestureRecognizer.minimumPressDuration = longPressDuration
         }
     }
+    
+    /// The duration of the cell selection animation.
     public var animationDuration: NSTimeInterval = 0.2
+    
+    /// The opacity of the selected cell.
     public var cellOpacity: CGFloat = 1
+    
+    /// The scale factor for the selected cell.
     public var cellScale: CGFloat = 1
+    
+    /// The shadow color for the selected cell.
     public var shadowColor = UIColor.blackColor()
+    
+    /// The shadow opacity for the selected cell.
     public var shadowOpacity: CGFloat = 0.3
+    
+    /// The shadow radius for the selected cell.
     public var shadowRadius: CGFloat = 10
+    
+    /// The shadow offset for the selected cell.
     public var shadowOffset = CGSize(width: 0, height: 3)
+    
+    /// The spacer cell style.
     public var spacerCellStyle: ReorderSpacerCellStyle = .Automatic
+    
+    // MARK: - Internal state
+    
+    internal enum ReorderState {
+        case Ready(snapshotRow: NSIndexPath?)
+        case Reordering(sourceRow: NSIndexPath, destinationRow: NSIndexPath, snapshotOffset: CGFloat)
+    }
+    
+    internal weak var tableView: UITableView?
+    
+    internal var reorderState: ReorderState = .Ready(snapshotRow: nil)
+    internal var snapshotView: UIView? = nil
+    
+    internal var autoScrollDisplayLink: CADisplayLink?
+    internal var lastAutoScrollTimeStamp: CFTimeInterval?
+    
+    internal lazy var reorderGestureRecognizer: UILongPressGestureRecognizer = {
+        let gestureRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(handleReorderGesture))
+        gestureRecognizer.delegate = self
+        gestureRecognizer.minimumPressDuration = self.longPressDuration
+        return gestureRecognizer
+    }()
     
     // MARK: - Lifecycle
     
@@ -76,26 +121,9 @@ public class ReorderController: NSObject {
         reorderState = .Ready(snapshotRow: nil)
     }
     
-    // MARK: - Gesture recognizer
-    
-    @objc private func handleReorderGesture(gestureRecognizer: UIGestureRecognizer) {
-        let gestureLocation = gestureRecognizer.locationInView(tableView)
-        
-        switch gestureRecognizer.state {
-        case .Began:
-            beginReorderWithTouchPoint(gestureLocation)
-            
-        case .Changed:
-            updateReorderWithTouchPoint(gestureLocation)
-            
-        case .Ended, .Cancelled, .Failed, .Possible:
-            endReorder()
-        }
-    }
-    
     // MARK: - Reordering
     
-    private func beginReorderWithTouchPoint(point: CGPoint) {
+    internal func beginReorderWithTouchPoint(point: CGPoint) {
         guard case .Ready = reorderState else { return }
         guard let tableView = tableView, sourceRow = tableView.indexPathForRowAtPoint(point) else { return }
         
@@ -117,7 +145,7 @@ public class ReorderController: NSObject {
         delegate?.tableViewDidBeginReordering?(tableView)
     }
     
-    private func updateReorderWithTouchPoint(point: CGPoint) {
+    internal func updateReorderWithTouchPoint(point: CGPoint) {
         guard case let .Reordering(_, _, snapshotOffset) = reorderState else { return }
         guard let snapshotView = snapshotView else { return }
         
@@ -125,7 +153,7 @@ public class ReorderController: NSObject {
         updateDestinationRow()
     }
     
-    private func endReorder() {
+    internal func endReorder() {
         guard case let .Reordering(_, destinationRow, _) = reorderState else { return }
         guard let tableView = tableView else { return }
         
@@ -159,165 +187,32 @@ public class ReorderController: NSObject {
         delegate?.tableViewDidFinishReordering?(tableView)
     }
     
-    // MARK: - Destination row
-    
-    private func updateDestinationRow() {
-        guard case let .Reordering(sourceRow, destinationRow, snapshotOffset) = reorderState else { return }
-        guard let tableView = tableView else { return }
-        
-        guard let newDestinationRow = newDestinationRow() where newDestinationRow != destinationRow else { return }
-        
-        reorderState = .Reordering(
-            sourceRow: sourceRow,
-            destinationRow: newDestinationRow,
-            snapshotOffset: snapshotOffset
-        )
-        delegate?.tableView(tableView, reorderRowAtIndexPath: destinationRow, toIndexPath: newDestinationRow)
-        
-        tableView.beginUpdates()
-        tableView.deleteRowsAtIndexPaths([destinationRow], withRowAnimation: .Fade)
-        tableView.insertRowsAtIndexPaths([newDestinationRow], withRowAnimation: .Fade)
-        tableView.endUpdates()
-    }
-    
-    private func newDestinationRow() -> NSIndexPath? {
-        guard case let .Reordering(_, destinationRow, _) = reorderState else { return nil }
-        guard let tableView = tableView, snapshotView = snapshotView else { return nil }
-        
-        let rowSnapDistances = tableView.indexPathsForVisibleRows?.map { path -> (path: NSIndexPath, distance: CGFloat) in
-            let rect = tableView.rectForRowAtIndexPath(path)
-            
-            if destinationRow.compare(path) == .OrderedAscending {
-                return (path, abs(snapshotView.frame.maxY - rect.maxY))
-            } else {
-                return (path, abs(snapshotView.frame.minY - rect.minY))
-            }
-        } ?? []
-        
-        let sectionSnapDistances = (0..<tableView.numberOfSections).flatMap { section -> (path: NSIndexPath, distance: CGFloat)? in
-            let rowsInSection = tableView.numberOfRowsInSection(section)
-            
-            if section > destinationRow.section {
-                let rect: CGRect
-                if rowsInSection == 0 {
-                    rect = rectForEmptySection(section)
-                } else {
-                    rect = tableView.rectForRowAtIndexPath(NSIndexPath(forRow: 0, inSection: section))
-                }
-
-                let path = NSIndexPath(forRow: 0, inSection: section)
-                return (path, abs(snapshotView.frame.maxY - rect.minY))
-            }
-            else if section < destinationRow.section {
-                let rect: CGRect
-                if rowsInSection == 0 {
-                    rect = rectForEmptySection(section)
-                } else {
-                    rect = tableView.rectForRowAtIndexPath(NSIndexPath(forRow: rowsInSection - 1, inSection: section))
-                }
-                
-                let path = NSIndexPath(forRow: rowsInSection, inSection: section)
-                return (path, abs(snapshotView.frame.minY - rect.maxY))
-            }
-            else {
-                return nil
-            }
-        }
-        
-        let snapDistances = (rowSnapDistances + sectionSnapDistances).filter { delegate?.tableView?(tableView, canReorderRowAtIndexPath: $0.path) != false }
-        return snapDistances.minElement({ $0.distance < $1.distance })?.path
-    }
-    
-    private func rectForEmptySection(section: Int) -> CGRect {
-        guard let tableView = tableView else { return .zero }
-        
-        let sectionRect = tableView.rectForHeaderInSection(section)
-        return UIEdgeInsetsInsetRect(sectionRect, UIEdgeInsets(top: sectionRect.height, left: 0, bottom: 0, right: 0))
-    }
-    
-    // MARK: - Snapshot view
-    
-    private func createSnapshotViewForCellAtIndexPath(indexPath: NSIndexPath) {
-        removeSnapshotView()
-        self.tableView?.reloadData()
-
-        guard let cell = tableView?.cellForRowAtIndexPath(indexPath) else { return }
-        
-        UIGraphicsBeginImageContextWithOptions(cell.bounds.size, false, 0)
-        cell.layer.renderInContext(UIGraphicsGetCurrentContext()!)
-        let image = UIGraphicsGetImageFromCurrentImageContext()
-        UIGraphicsEndImageContext()
-        
-        let snapshotView = UIImageView(image: image)
-        snapshotView.frame = cell.frame
-        
-        snapshotView.layer.masksToBounds = false
-        snapshotView.layer.opacity = Float(cellOpacity)
-        snapshotView.layer.transform = CATransform3DMakeScale(cellScale, cellScale, 1)
-        
-        snapshotView.layer.shadowColor = shadowColor.CGColor
-        snapshotView.layer.shadowOpacity = Float(shadowOpacity)
-        snapshotView.layer.shadowRadius = shadowRadius
-        snapshotView.layer.shadowOffset = shadowOffset
-        
-        tableView?.addSubview(snapshotView)
-        self.snapshotView = snapshotView
-    }
-    
-    private func removeSnapshotView() {
-        snapshotView?.removeFromSuperview()
-        snapshotView = nil
-    }
-    
-    private func animateSnapshotViewIn() {
-        let opacityAnimation = CABasicAnimation(keyPath: "opacity")
-        opacityAnimation.fromValue = 1
-        opacityAnimation.toValue = cellOpacity
-        opacityAnimation.duration = animationDuration
-        
-        let shadowAnimation = CABasicAnimation(keyPath: "shadowOpacity")
-        shadowAnimation.fromValue = 0
-        shadowAnimation.toValue = shadowOpacity
-        shadowAnimation.duration = animationDuration
-        
-        let transformAnimation = CABasicAnimation(keyPath: "transform.scale")
-        transformAnimation.fromValue = 1
-        transformAnimation.toValue = cellScale
-        transformAnimation.duration = animationDuration
-        transformAnimation.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
-        
-        snapshotView?.layer.addAnimation(opacityAnimation, forKey: nil)
-        snapshotView?.layer.addAnimation(shadowAnimation, forKey: nil)
-        snapshotView?.layer.addAnimation(transformAnimation, forKey: nil)
-    }
-    
-    private func animateSnapshotViewOut() {
-        let opacityAnimation = CABasicAnimation(keyPath: "opacity")
-        opacityAnimation.fromValue = cellOpacity
-        opacityAnimation.toValue = 1
-        opacityAnimation.duration = animationDuration
-        
-        let shadowAnimation = CABasicAnimation(keyPath: "shadowOpacity")
-        shadowAnimation.fromValue = shadowOpacity
-        shadowAnimation.toValue = 0
-        shadowAnimation.duration = animationDuration
-        
-        let transformAnimation = CABasicAnimation(keyPath: "transform.scale")
-        transformAnimation.fromValue = cellScale
-        transformAnimation.toValue = 1
-        transformAnimation.duration = animationDuration
-        transformAnimation.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
-        
-        snapshotView?.layer.addAnimation(opacityAnimation, forKey: nil)
-        snapshotView?.layer.addAnimation(shadowAnimation, forKey: nil)
-        snapshotView?.layer.addAnimation(transformAnimation, forKey: nil)
-        
-        snapshotView?.layer.opacity = 1
-        snapshotView?.layer.shadowOpacity = 0
-        snapshotView?.layer.transform = CATransform3DIdentity
-    }
-    
     // MARK: - Spacer cell
+    
+    /**
+     Returns a `UITableViewCell` if the table view should display a spacer cell at the given index path.
+     
+     Call this method at the beginning of your `tableView(_:cellForRowAtIndexPath:)`, like so:
+     ```
+     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+         if let spacer = tableView.reorder.spacerCellForIndexPath(indexPath) {
+             return spacer
+         }
+     
+         // ...
+     }
+     ```
+     - Parameter indexPath: The index path
+     - Returns: An optional `UITableViewCell`.
+     */
+    public func spacerCellForIndexPath(indexPath: NSIndexPath) -> UITableViewCell? {
+        if case let .Reordering(_, destinationRow, _) = reorderState where indexPath == destinationRow {
+            return spacerCell()
+        } else if case let .Ready(snapshotRow) = reorderState where indexPath == snapshotRow {
+            return spacerCell()
+        }
+        return nil
+    }
     
     private func spacerCell() -> UITableViewCell? {
         guard let snapshotView = snapshotView else { return nil }
@@ -345,89 +240,4 @@ public class ReorderController: NSObject {
         return cell
     }
     
-    public func spacerCellForIndexPath(indexPath: NSIndexPath) -> UITableViewCell? {
-        if case let .Reordering(_, destinationRow, _) = reorderState where indexPath == destinationRow {
-            return spacerCell()
-        } else if case let .Ready(snapshotRow) = reorderState where indexPath == snapshotRow {
-            return spacerCell()
-        }
-        return nil
-    }
-    
-    // MARK: - Auto scrolling
-    
-    private func activateAutoScrollDisplayLink() {
-        autoScrollDisplayLink = CADisplayLink(target: self, selector: #selector(handleDisplayLinkUpdate))
-        autoScrollDisplayLink?.addToRunLoop(NSRunLoop.mainRunLoop(), forMode: NSDefaultRunLoopMode)
-        lastTimeStamp = nil
-    }
-    
-    private func clearAutoScrollDisplayLink() {
-        autoScrollDisplayLink?.invalidate()
-        autoScrollDisplayLink = nil
-        lastTimeStamp = nil
-    }
-    
-    @objc private func handleDisplayLinkUpdate(displayLink: CADisplayLink) {
-        guard let tableView = tableView, snapshotView = snapshotView else { return }
-        
-        if let lastTimeStamp = lastTimeStamp {
-            let scrollVelocity = autoScrollVelocity()
-            
-            if scrollVelocity != 0 {
-                let elapsedTime = displayLink.timestamp - lastTimeStamp
-                let scrollDelta = CGFloat(elapsedTime) * scrollVelocity
-                
-                let oldOffset = tableView.contentOffset
-                tableView.setContentOffset(CGPoint(x: oldOffset.x, y: oldOffset.y + CGFloat(scrollDelta)), animated: false)
-                
-                tableView.contentOffset.y = min(tableView.contentOffset.y, tableView.contentSize.height + tableView.contentInset.bottom - tableView.frame.height)
-                tableView.contentOffset.y = max(tableView.contentOffset.y, -tableView.contentInset.top)
-                
-                let actualScrollDistance = tableView.contentOffset.y - oldOffset.y
-                snapshotView.frame.origin.y += actualScrollDistance
-                
-                updateDestinationRow()
-            }
-        }
-        lastTimeStamp = displayLink.timestamp
-    }
-    
-    private func autoScrollVelocity() -> CGFloat {
-        guard let tableView = tableView, snapshotView = snapshotView else { return 0 }
-        
-        let scrollBounds = UIEdgeInsetsInsetRect(tableView.bounds, tableView.contentInset)
-        let distanceToTop = max(snapshotView.frame.minY - scrollBounds.minY, 0)
-        let distanceToBottom = max(scrollBounds.maxY - snapshotView.frame.maxY, 0)
-        
-        if distanceToTop < autoScrollThreshold {
-            return mapValue(distanceToTop, inRangeWithMin: autoScrollThreshold, max: 0, toRangeWithMin: -autoScrollMinVelocity, max: -autoScrollMaxVelocity)
-        }
-        if distanceToBottom < autoScrollThreshold {
-            return mapValue(distanceToBottom, inRangeWithMin: autoScrollThreshold, max: 0, toRangeWithMin: autoScrollMinVelocity, max: autoScrollMaxVelocity)
-        }
-        return 0
-    }
-    
-}
-
-// MARK: - Gesture recognizer delegate
-
-extension ReorderController: UIGestureRecognizerDelegate {
-    
-    public func gestureRecognizerShouldBegin(gestureRecognizer: UIGestureRecognizer) -> Bool {
-        guard let tableView = tableView else { return false }
-        
-        let gestureLocation = gestureRecognizer.locationInView(tableView)
-        guard let indexPath = tableView.indexPathForRowAtPoint(gestureLocation) else { return false }
-        
-        return delegate?.tableView?(tableView, canReorderRowAtIndexPath: indexPath) ?? true
-    }
-    
-}
-
-// MARK: - Utility
-
-private func mapValue(value: CGFloat, inRangeWithMin minA: CGFloat, max maxA: CGFloat, toRangeWithMin minB: CGFloat, max maxB: CGFloat) -> CGFloat {
-    return (value - minA) * (maxB - minB) / (maxA - minA) + minB
 }
