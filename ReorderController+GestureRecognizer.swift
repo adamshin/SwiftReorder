@@ -22,21 +22,34 @@
 
 import UIKit
 
-extension UITableView {
-    
-    private struct AssociatedKeys {
-        static var reorder: UInt8 = 0
+extension ReorderController {
+
+    @objc internal func handleReorderGesture(gestureRecognizer: UIGestureRecognizer) {
+        let gestureLocation = gestureRecognizer.locationInView(tableView)
+        
+        switch gestureRecognizer.state {
+        case .Began:
+            beginReorderWithTouchPoint(gestureLocation)
+            
+        case .Changed:
+            updateReorderWithTouchPoint(gestureLocation)
+            
+        case .Ended, .Cancelled, .Failed, .Possible:
+            endReorder()
+        }
     }
     
-    /// An object that manages drag-and-drop reordering of table view cells.
-    public var reorder: ReorderController {
-        get {
-            return objc_getAssociatedObject(self, &AssociatedKeys.reorder) as? ReorderController ?? {
-                let reorder = ReorderController(tableView: self)
-                objc_setAssociatedObject(self, &AssociatedKeys.reorder, reorder, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-                return reorder
-            }()
-        }
+}
+
+extension ReorderController: UIGestureRecognizerDelegate {
+    
+    public func gestureRecognizerShouldBegin(gestureRecognizer: UIGestureRecognizer) -> Bool {
+        guard let tableView = tableView else { return false }
+        
+        let gestureLocation = gestureRecognizer.locationInView(tableView)
+        guard let indexPath = tableView.indexPathForRowAtPoint(gestureLocation) else { return false }
+        
+        return delegate?.tableView?(tableView, canReorderRowAtIndexPath: indexPath) ?? true
     }
     
 }
