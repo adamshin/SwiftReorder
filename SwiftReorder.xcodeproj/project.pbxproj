@@ -7,10 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		660E70ED1D7F3C38009BFEB4 /* ReorderController+GestureRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 660E70EC1D7F3C38009BFEB4 /* ReorderController+GestureRecognizer.swift */; };
-		660E70EF1D7F3D50009BFEB4 /* ReorderController+DestinationRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 660E70EE1D7F3D50009BFEB4 /* ReorderController+DestinationRow.swift */; };
-		660E70F11D7F3DD2009BFEB4 /* ReorderController+SnapshotView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 660E70F01D7F3DD2009BFEB4 /* ReorderController+SnapshotView.swift */; };
-		660E70F31D7F3E37009BFEB4 /* ReorderController+AutoScroll.swift in Sources */ = {isa = PBXBuildFile; fileRef = 660E70F21D7F3E37009BFEB4 /* ReorderController+AutoScroll.swift */; };
+		66DF25141D8080A000C19289 /* ReorderController+AutoScroll.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66DF25101D8080A000C19289 /* ReorderController+AutoScroll.swift */; };
+		66DF25151D8080A000C19289 /* ReorderController+DestinationRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66DF25111D8080A000C19289 /* ReorderController+DestinationRow.swift */; };
+		66DF25161D8080A000C19289 /* ReorderController+GestureRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66DF25121D8080A000C19289 /* ReorderController+GestureRecognizer.swift */; };
+		66DF25171D8080A000C19289 /* ReorderController+SnapshotView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66DF25131D8080A000C19289 /* ReorderController+SnapshotView.swift */; };
 		66FC50F11D5EE49D00CFCCCE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66FC50E81D5EE49D00CFCCCE /* AppDelegate.swift */; };
 		66FC50F21D5EE49D00CFCCCE /* BasicViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66FC50E91D5EE49D00CFCCCE /* BasicViewController.swift */; };
 		66FC50F31D5EE49D00CFCCCE /* DynamicHeightViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66FC50EA1D5EE49D00CFCCCE /* DynamicHeightViewController.swift */; };
@@ -25,10 +25,10 @@
 
 /* Begin PBXFileReference section */
 		660256931CE6A5170029CB5F /* SwiftReorder.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SwiftReorder.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		660E70EC1D7F3C38009BFEB4 /* ReorderController+GestureRecognizer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ReorderController+GestureRecognizer.swift"; sourceTree = "<group>"; };
-		660E70EE1D7F3D50009BFEB4 /* ReorderController+DestinationRow.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ReorderController+DestinationRow.swift"; sourceTree = "<group>"; };
-		660E70F01D7F3DD2009BFEB4 /* ReorderController+SnapshotView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ReorderController+SnapshotView.swift"; sourceTree = "<group>"; };
-		660E70F21D7F3E37009BFEB4 /* ReorderController+AutoScroll.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ReorderController+AutoScroll.swift"; sourceTree = "<group>"; };
+		66DF25101D8080A000C19289 /* ReorderController+AutoScroll.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "ReorderController+AutoScroll.swift"; path = "Source/ReorderController+AutoScroll.swift"; sourceTree = "<group>"; };
+		66DF25111D8080A000C19289 /* ReorderController+DestinationRow.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "ReorderController+DestinationRow.swift"; path = "Source/ReorderController+DestinationRow.swift"; sourceTree = "<group>"; };
+		66DF25121D8080A000C19289 /* ReorderController+GestureRecognizer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "ReorderController+GestureRecognizer.swift"; path = "Source/ReorderController+GestureRecognizer.swift"; sourceTree = "<group>"; };
+		66DF25131D8080A000C19289 /* ReorderController+SnapshotView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "ReorderController+SnapshotView.swift"; path = "Source/ReorderController+SnapshotView.swift"; sourceTree = "<group>"; };
 		66FC50E81D5EE49D00CFCCCE /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = Example/AppDelegate.swift; sourceTree = SOURCE_ROOT; };
 		66FC50E91D5EE49D00CFCCCE /* BasicViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = BasicViewController.swift; path = Example/BasicViewController.swift; sourceTree = SOURCE_ROOT; };
 		66FC50EA1D5EE49D00CFCCCE /* DynamicHeightViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DynamicHeightViewController.swift; path = Example/DynamicHeightViewController.swift; sourceTree = SOURCE_ROOT; };
@@ -92,10 +92,10 @@
 			children = (
 				66FC50FA1D5EE4CA00CFCCCE /* UITableView+Reorder.swift */,
 				66FC50FC1D5EE4D600CFCCCE /* ReorderController.swift */,
-				660E70F01D7F3DD2009BFEB4 /* ReorderController+SnapshotView.swift */,
-				660E70EE1D7F3D50009BFEB4 /* ReorderController+DestinationRow.swift */,
-				660E70F21D7F3E37009BFEB4 /* ReorderController+AutoScroll.swift */,
-				660E70EC1D7F3C38009BFEB4 /* ReorderController+GestureRecognizer.swift */,
+				66DF25131D8080A000C19289 /* ReorderController+SnapshotView.swift */,
+				66DF25111D8080A000C19289 /* ReorderController+DestinationRow.swift */,
+				66DF25101D8080A000C19289 /* ReorderController+AutoScroll.swift */,
+				66DF25121D8080A000C19289 /* ReorderController+GestureRecognizer.swift */,
 			);
 			name = Source;
 			sourceTree = "<group>";
@@ -169,16 +169,16 @@
 			buildActionMask = 2147483647;
 			files = (
 				66FC50F91D5EE49D00CFCCCE /* RootViewController.swift in Sources */,
-				660E70F31D7F3E37009BFEB4 /* ReorderController+AutoScroll.swift in Sources */,
+				66DF25161D8080A000C19289 /* ReorderController+GestureRecognizer.swift in Sources */,
 				66FC50FD1D5EE4D600CFCCCE /* ReorderController.swift in Sources */,
 				66FC50F31D5EE49D00CFCCCE /* DynamicHeightViewController.swift in Sources */,
+				66DF25141D8080A000C19289 /* ReorderController+AutoScroll.swift in Sources */,
 				66FC50F81D5EE49D00CFCCCE /* NonMovableViewController.swift in Sources */,
+				66DF25151D8080A000C19289 /* ReorderController+DestinationRow.swift in Sources */,
 				66FC50F11D5EE49D00CFCCCE /* AppDelegate.swift in Sources */,
-				660E70F11D7F3DD2009BFEB4 /* ReorderController+SnapshotView.swift in Sources */,
-				660E70EF1D7F3D50009BFEB4 /* ReorderController+DestinationRow.swift in Sources */,
 				66FC50F71D5EE49D00CFCCCE /* LongListViewController.swift in Sources */,
 				66FC50FB1D5EE4CA00CFCCCE /* UITableView+Reorder.swift in Sources */,
-				660E70ED1D7F3C38009BFEB4 /* ReorderController+GestureRecognizer.swift in Sources */,
+				66DF25171D8080A000C19289 /* ReorderController+SnapshotView.swift in Sources */,
 				66FC50F51D5EE49D00CFCCCE /* GroupedViewController.swift in Sources */,
 				66FC50F21D5EE49D00CFCCCE /* BasicViewController.swift in Sources */,
 				66FC50F41D5EE49D00CFCCCE /* EffectsViewController.swift in Sources */,
