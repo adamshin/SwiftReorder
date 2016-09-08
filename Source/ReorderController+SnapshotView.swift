@@ -24,14 +24,14 @@ import UIKit
 
 extension ReorderController {
     
-    internal func createSnapshotViewForCellAtIndexPath(indexPath: NSIndexPath) {
+    internal func createSnapshotViewForCell(at indexPath: IndexPath) {
         removeSnapshotView()
         self.tableView?.reloadData()
         
-        guard let cell = tableView?.cellForRowAtIndexPath(indexPath) else { return }
+        guard let cell = tableView?.cellForRow(at: indexPath) else { return }
         
         UIGraphicsBeginImageContextWithOptions(cell.bounds.size, false, 0)
-        cell.layer.renderInContext(UIGraphicsGetCurrentContext()!)
+        cell.layer.render(in: UIGraphicsGetCurrentContext()!)
         let image = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
         
@@ -42,7 +42,7 @@ extension ReorderController {
         snapshotView.layer.opacity = Float(cellOpacity)
         snapshotView.layer.transform = CATransform3DMakeScale(cellScale, cellScale, 1)
         
-        snapshotView.layer.shadowColor = shadowColor.CGColor
+        snapshotView.layer.shadowColor = shadowColor.cgColor
         snapshotView.layer.shadowOpacity = Float(shadowOpacity)
         snapshotView.layer.shadowRadius = shadowRadius
         snapshotView.layer.shadowOffset = shadowOffset
@@ -73,9 +73,9 @@ extension ReorderController {
         transformAnimation.duration = animationDuration
         transformAnimation.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
         
-        snapshotView?.layer.addAnimation(opacityAnimation, forKey: nil)
-        snapshotView?.layer.addAnimation(shadowAnimation, forKey: nil)
-        snapshotView?.layer.addAnimation(transformAnimation, forKey: nil)
+        snapshotView?.layer.add(opacityAnimation, forKey: nil)
+        snapshotView?.layer.add(shadowAnimation, forKey: nil)
+        snapshotView?.layer.add(transformAnimation, forKey: nil)
     }
     
     internal func animateSnapshotViewOut() {
@@ -95,9 +95,9 @@ extension ReorderController {
         transformAnimation.duration = animationDuration
         transformAnimation.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
         
-        snapshotView?.layer.addAnimation(opacityAnimation, forKey: nil)
-        snapshotView?.layer.addAnimation(shadowAnimation, forKey: nil)
-        snapshotView?.layer.addAnimation(transformAnimation, forKey: nil)
+        snapshotView?.layer.add(opacityAnimation, forKey: nil)
+        snapshotView?.layer.add(shadowAnimation, forKey: nil)
+        snapshotView?.layer.add(transformAnimation, forKey: nil)
         
         snapshotView?.layer.opacity = 1
         snapshotView?.layer.shadowOpacity = 0

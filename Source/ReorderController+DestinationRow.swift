@@ -25,61 +25,61 @@ import UIKit
 extension ReorderController {
     
     internal func updateDestinationRow() {
-        guard case let .Reordering(sourceRow, destinationRow, snapshotOffset) = reorderState else { return }
+        guard case let .reordering(sourceRow, destinationRow, snapshotOffset) = reorderState else { return }
         guard let tableView = tableView else { return }
         
-        guard let newDestinationRow = newDestinationRow() where newDestinationRow != destinationRow else { return }
+        guard let newDestinationRow = newDestinationRow() , newDestinationRow != destinationRow else { return }
         
-        reorderState = .Reordering(
+        reorderState = .reordering(
             sourceRow: sourceRow,
             destinationRow: newDestinationRow,
             snapshotOffset: snapshotOffset
         )
-        delegate?.tableView(tableView, reorderRowAtIndexPath: destinationRow, toIndexPath: newDestinationRow)
+        delegate?.tableView(tableView, reorderRowAt: destinationRow, to: newDestinationRow)
         
         tableView.beginUpdates()
-        tableView.deleteRowsAtIndexPaths([destinationRow], withRowAnimation: .Fade)
-        tableView.insertRowsAtIndexPaths([newDestinationRow], withRowAnimation: .Fade)
+        tableView.deleteRows(at: [destinationRow], with: .fade)
+        tableView.insertRows(at: [newDestinationRow], with: .fade)
         tableView.endUpdates()
     }
     
-    internal func newDestinationRow() -> NSIndexPath? {
-        guard case let .Reordering(_, destinationRow, _) = reorderState else { return nil }
-        guard let tableView = tableView, snapshotView = snapshotView else { return nil }
+    internal func newDestinationRow() -> IndexPath? {
+        guard case let .reordering(_, destinationRow, _) = reorderState else { return nil }
+        guard let tableView = tableView, let snapshotView = snapshotView else { return nil }
         
-        let rowSnapDistances = tableView.indexPathsForVisibleRows?.map { path -> (path: NSIndexPath, distance: CGFloat) in
-            let rect = tableView.rectForRowAtIndexPath(path)
+        let rowSnapDistances = tableView.indexPathsForVisibleRows?.map { path -> (path: IndexPath, distance: CGFloat) in
+            let rect = tableView.rectForRow(at: path)
             
-            if destinationRow.compare(path) == .OrderedAscending {
+            if (destinationRow as NSIndexPath).compare(path) == .orderedAscending {
                 return (path, abs(snapshotView.frame.maxY - rect.maxY))
             } else {
                 return (path, abs(snapshotView.frame.minY - rect.minY))
             }
-            } ?? []
+        } ?? []
         
-        let sectionSnapDistances = (0..<tableView.numberOfSections).flatMap { section -> (path: NSIndexPath, distance: CGFloat)? in
-            let rowsInSection = tableView.numberOfRowsInSection(section)
+        let sectionSnapDistances = (0..<tableView.numberOfSections).flatMap { section -> (path: IndexPath, distance: CGFloat)? in
+            let rowsInSection = tableView.numberOfRows(inSection: section)
             
-            if section > destinationRow.section {
+            if section > (destinationRow as NSIndexPath).section {
                 let rect: CGRect
                 if rowsInSection == 0 {
                     rect = rectForEmptySection(section)
                 } else {
-                    rect = tableView.rectForRowAtIndexPath(NSIndexPath(forRow: 0, inSection: section))
+                    rect = tableView.rectForRow(at: IndexPath(row: 0, section: section))
                 }
                 
-                let path = NSIndexPath(forRow: 0, inSection: section)
+                let path = IndexPath(row: 0, section: section)
                 return (path, abs(snapshotView.frame.maxY - rect.minY))
             }
-            else if section < destinationRow.section {
+            else if section < (destinationRow as NSIndexPath).section {
                 let rect: CGRect
                 if rowsInSection == 0 {
                     rect = rectForEmptySection(section)
                 } else {
-                    rect = tableView.rectForRowAtIndexPath(NSIndexPath(forRow: rowsInSection - 1, inSection: section))
+                    rect = tableView.rectForRow(at: IndexPath(row: rowsInSection - 1, section: section))
                 }
                 
-                let path = NSIndexPath(forRow: rowsInSection, inSection: section)
+                let path = IndexPath(row: rowsInSection, section: section)
                 return (path, abs(snapshotView.frame.minY - rect.maxY))
             }
             else {
@@ -87,14 +87,14 @@ extension ReorderController {
             }
         }
         
-        let snapDistances = (rowSnapDistances + sectionSnapDistances).filter { delegate?.tableView?(tableView, canReorderRowAtIndexPath: $0.path) != false }
-        return snapDistances.minElement({ $0.distance < $1.distance })?.path
+        let snapDistances = (rowSnapDistances + sectionSnapDistances).filter { delegate?.tableView(tableView, canReorderRowAt: $0.path) != false }
+        return snapDistances.min(by: { $0.distance < $1.distance })?.path
     }
     
-    internal func rectForEmptySection(section: Int) -> CGRect {
+    internal func rectForEmptySection(_ section: Int) -> CGRect {
         guard let tableView = tableView else { return .zero }
         
-        let sectionRect = tableView.rectForHeaderInSection(section)
+        let sectionRect = tableView.rectForHeader(inSection: section)
         return UIEdgeInsetsInsetRect(sectionRect, UIEdgeInsets(top: sectionRect.height, left: 0, bottom: 0, right: 0))
     }
     

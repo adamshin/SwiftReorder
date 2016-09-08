@@ -30,15 +30,17 @@ import UIKit
  - Transparent: The spacer cell is given a transparent background color, and the separator line is visible.
  */
 public enum ReorderSpacerCellStyle {
-    case Automatic
-    case Hidden
-    case Transparent
+    case automatic
+    case hidden
+    case transparent
 }
+
+// MARK: - TableViewReorderDelegate
 
 /**
  The delegate of a `ReorderController` must adopt the `TableViewReorderDelegate` protocol. This protocol defines methods for handling the reordering of rows.
  */
-@objc public protocol TableViewReorderDelegate: class {
+public protocol TableViewReorderDelegate: class {
     
     /**
      Tells the delegate that the user has moved a row from one location to another. Use this method to update your data source.
@@ -46,28 +48,44 @@ public enum ReorderSpacerCellStyle {
      - Parameter sourceIndexPath: The index path of the row to be moved.
      - Parameter destinationIndexPath: The index path of the row's new location.
      */
-    func tableView(tableView: UITableView, reorderRowAtIndexPath sourceIndexPath: NSIndexPath, toIndexPath destinationIndexPath: NSIndexPath)
+    func tableView(_ tableView: UITableView, reorderRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath)
     
     /**
      Asks the reorder delegate whether a given row can be moved.
      - Parameter tableView: The table view requesting this information.
      - Parameter indexPath: The index path of a row.
      */
-    optional func tableView(tableView: UITableView, canReorderRowAtIndexPath indexPath: NSIndexPath) -> Bool
+    func tableView(_ tableView: UITableView, canReorderRowAt indexPath: IndexPath) -> Bool
     
     /**
      Tells the delegate that the user has begun reordering a row.
      - Parameter tableView: The table view providing this information.
      */
-    optional func tableViewDidBeginReordering(tableView: UITableView)
+    func tableViewDidBeginReordering(_ tableView: UITableView)
     
     /**
      Tells the delegate that the user has finished reordering.
      - Parameter tableView: The table view providing this information.
      */
-    optional func tableViewDidFinishReordering(tableView: UITableView)
+    func tableViewDidFinishReordering(_ tableView: UITableView)
     
 }
+
+extension TableViewReorderDelegate {
+    
+    func tableView(_ tableView: UITableView, canReorderRowAt indexPath: IndexPath) -> Bool {
+        return true
+    }
+    
+    func tableViewDidBeginReordering(_ tableView: UITableView) {
+    }
+    
+    func tableViewDidFinishReordering(_ tableView: UITableView) {
+    }
+    
+}
+
+// MARK: - ReorderController
 
 /**
  An object that manages drag-and-drop reordering of table view cells.
@@ -79,14 +97,14 @@ public class ReorderController: NSObject {
     /// The delegate of the reorder controller.
     public weak var delegate: TableViewReorderDelegate?
     
-    public var longPressDuration: NSTimeInterval = 0.3 {
+    public var longPressDuration: TimeInterval = 0.3 {
         didSet {
             reorderGestureRecognizer.minimumPressDuration = longPressDuration
         }
     }
     
     /// The duration of the cell selection animation.
-    public var animationDuration: NSTimeInterval = 0.2
+    public var animationDuration: TimeInterval = 0.2
     
     /// The opacity of the selected cell.
     public var cellOpacity: CGFloat = 1
@@ -95,7 +113,7 @@ public class ReorderController: NSObject {
     public var cellScale: CGFloat = 1
     
     /// The shadow color for the selected cell.
-    public var shadowColor = UIColor.blackColor()
+    public var shadowColor = UIColor.black
     
     /// The shadow opacity for the selected cell.
     public var shadowOpacity: CGFloat = 0.3
@@ -107,18 +125,18 @@ public class ReorderController: NSObject {
     public var shadowOffset = CGSize(width: 0, height: 3)
     
     /// The spacer cell style.
-    public var spacerCellStyle: ReorderSpacerCellStyle = .Automatic
+    public var spacerCellStyle: ReorderSpacerCellStyle = .automatic
     
     // MARK: - Internal state
     
     internal enum ReorderState {
-        case Ready(snapshotRow: NSIndexPath?)
-        case Reordering(sourceRow: NSIndexPath, destinationRow: NSIndexPath, snapshotOffset: CGFloat)
+        case ready(snapshotRow: IndexPath?)
+        case reordering(sourceRow: IndexPath, destinationRow: IndexPath, snapshotOffset: CGFloat)
     }
     
     internal weak var tableView: UITableView?
     
-    internal var reorderState: ReorderState = .Ready(snapshotRow: nil)
+    internal var reorderState: ReorderState = .ready(snapshotRow: nil)
     internal var snapshotView: UIView? = nil
     
     internal var autoScrollDisplayLink: CADisplayLink?
@@ -139,48 +157,48 @@ public class ReorderController: NSObject {
         self.tableView = tableView
         tableView.addGestureRecognizer(reorderGestureRecognizer)
         
-        reorderState = .Ready(snapshotRow: nil)
+        reorderState = .ready(snapshotRow: nil)
     }
     
     // MARK: - Reordering
     
-    internal func beginReorderWithTouchPoint(point: CGPoint) {
-        guard case .Ready = reorderState else { return }
-        guard let tableView = tableView, sourceRow = tableView.indexPathForRowAtPoint(point) else { return }
+    internal func beginReorder(touchPoint: CGPoint) {
+        guard case .ready = reorderState else { return }
+        guard let tableView = tableView, let sourceRow = tableView.indexPathForRow(at: touchPoint) else { return }
         
-        guard delegate?.tableView?(tableView, canReorderRowAtIndexPath: sourceRow) != false else { return }
+        guard delegate?.tableView(tableView, canReorderRowAt: sourceRow) != false else { return }
         
-        createSnapshotViewForCellAtIndexPath(sourceRow)
+        createSnapshotViewForCell(at: sourceRow)
         animateSnapshotViewIn()
         activateAutoScrollDisplayLink()
         
         tableView.reloadData()
         
-        let snapshotOffset = snapshotView.flatMap { $0.center.y - point.y } ?? 0
-        reorderState = .Reordering(
+        let snapshotOffset = snapshotView.flatMap { $0.center.y - touchPoint.y } ?? 0
+        reorderState = .reordering(
             sourceRow: sourceRow,
             destinationRow: sourceRow,
             snapshotOffset: snapshotOffset
         )
 
-        delegate?.tableViewDidBeginReordering?(tableView)
+        delegate?.tableViewDidBeginReordering(tableView)
     }
     
-    internal func updateReorderWithTouchPoint(point: CGPoint) {
-        guard case let .Reordering(_, _, snapshotOffset) = reorderState else { return }
+    internal func updateReorder(touchPoint: CGPoint) {
+        guard case let .reordering(_, _, snapshotOffset) = reorderState else { return }
         guard let snapshotView = snapshotView else { return }
         
-        snapshotView.center.y = point.y + snapshotOffset
+        snapshotView.center.y = touchPoint.y + snapshotOffset
         updateDestinationRow()
     }
     
     internal func endReorder() {
-        guard case let .Reordering(_, destinationRow, _) = reorderState else { return }
+        guard case let .reordering(_, destinationRow, _) = reorderState else { return }
         guard let tableView = tableView else { return }
         
-        reorderState = .Ready(snapshotRow: destinationRow)
+        reorderState = .ready(snapshotRow: destinationRow)
         
-        let rect = tableView.rectForRowAtIndexPath(destinationRow)
+        let rect = tableView.rectForRow(at: destinationRow)
         let rectCenter = CGPoint(x: rect.midX, y: rect.midY)
         
         // If no values actually change inside a UIView animation block, the completion handler is called immediately.
@@ -189,14 +207,14 @@ public class ReorderController: NSObject {
             snapshotView?.center.y += 0.1
         }
         
-        UIView.animateWithDuration(animationDuration, animations: {
+        UIView.animate(withDuration: animationDuration, animations: {
             self.snapshotView?.center = CGPoint(x: rect.midX, y: rect.midY)
         }, completion: { finished in
-            if case let .Ready(snapshotRow) = self.reorderState {
+            if case let .ready(snapshotRow) = self.reorderState {
                 if let snapshotRow = snapshotRow {
-                    self.reorderState = .Ready(snapshotRow: nil)
+                    self.reorderState = .ready(snapshotRow: nil)
                     UIView.performWithoutAnimation {
-                        tableView.reloadRowsAtIndexPaths([snapshotRow], withRowAnimation: .None)
+                        tableView.reloadRows(at: [snapshotRow], with: .none)
                     }
                     self.removeSnapshotView()
                 }
@@ -205,7 +223,7 @@ public class ReorderController: NSObject {
         animateSnapshotViewOut()
         clearAutoScrollDisplayLink()
         
-        delegate?.tableViewDidFinishReordering?(tableView)
+        delegate?.tableViewDidFinishReordering(tableView)
     }
     
     // MARK: - Spacer cell
@@ -213,10 +231,10 @@ public class ReorderController: NSObject {
     /**
      Returns a `UITableViewCell` if the table view should display a spacer cell at the given index path.
      
-     Use this method at the beginning of your `tableView(_:cellForRowAtIndexPath:)`, like so:
+     Use this method at the beginning of your `tableView(_:cellForRowAt:)`, like so:
      ```
-     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-         if let spacer = tableView.reorder.spacerCellForIndexPath(indexPath) {
+     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+         if let spacer = tableView.reorder.spacerCell(for: indexPath) {
              return spacer
          }
      
@@ -226,10 +244,10 @@ public class ReorderController: NSObject {
      - Parameter indexPath: The index path
      - Returns: An optional `UITableViewCell`.
      */
-    public func spacerCellForIndexPath(indexPath: NSIndexPath) -> UITableViewCell? {
-        if case let .Reordering(_, destinationRow, _) = reorderState where indexPath == destinationRow {
+    public func spacerCell(for indexPath: IndexPath) -> UITableViewCell? {
+        if case let .reordering(_, destinationRow, _) = reorderState , indexPath == destinationRow {
             return spacerCell()
-        } else if case let .Ready(snapshotRow) = reorderState where indexPath == snapshotRow {
+        } else if case let .ready(snapshotRow) = reorderState , indexPath == snapshotRow {
             return spacerCell()
         }
         return nil
@@ -240,22 +258,22 @@ public class ReorderController: NSObject {
         
         let cell = UITableViewCell()
         let height = snapshotView.bounds.height
-        NSLayoutConstraint(item: cell, attribute: .Height, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 0, constant: height).active = true
+        NSLayoutConstraint(item: cell, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 0, constant: height).isActive = true
         
         let hideCell: Bool
         switch spacerCellStyle {
-        case .Automatic:
-            hideCell = tableView?.style == .Grouped
-        case .Hidden:
+        case .automatic:
+            hideCell = tableView?.style == .grouped
+        case .hidden:
             hideCell = true
-        case .Transparent:
+        case .transparent:
             hideCell = false
         }
         
         if hideCell {
-            cell.hidden = true
+            cell.isHidden = true
         } else {
-            cell.backgroundColor = .clearColor()
+            cell.backgroundColor = .clear
         }
         
         return cell

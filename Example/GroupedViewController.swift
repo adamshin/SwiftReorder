@@ -34,7 +34,7 @@ class GroupedViewController: UITableViewController {
     }
     
     init() {
-        super.init(style: .Grouped)
+        super.init(style: .grouped)
     }
     
     override func viewDidLoad() {
@@ -42,7 +42,7 @@ class GroupedViewController: UITableViewController {
         
         title = "Grouped"
         
-        tableView.registerClass(UITableViewCell.self, forCellReuseIdentifier: "cell")
+        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
         tableView.allowsSelection = false
         tableView.reorder.delegate = self
     }
@@ -51,26 +51,26 @@ class GroupedViewController: UITableViewController {
 
 extension GroupedViewController {
     
-    override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+    override func numberOfSections(in tableView: UITableView) -> Int {
         return sectionedItems.count
     }
     
-    override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return sectionedItems[section].items.count
     }
     
-    override func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         return sectionedItems[section].title
     }
 
-    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        if let spacer = tableView.reorder.spacerCellForIndexPath(indexPath) {
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        if let spacer = tableView.reorder.spacerCell(for: indexPath) {
             return spacer
         }
         
-        let cell = tableView.dequeueReusableCellWithIdentifier("cell", forIndexPath: indexPath)
-        cell.backgroundColor = .whiteColor()
-        cell.textLabel?.text = sectionedItems[indexPath.section].items[indexPath.row]
+        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
+        cell.backgroundColor = .white
+        cell.textLabel?.text = sectionedItems[(indexPath as NSIndexPath).section].items[(indexPath as NSIndexPath).row]
         
         return cell
     }
@@ -79,10 +79,10 @@ extension GroupedViewController {
 
 extension GroupedViewController: TableViewReorderDelegate {
     
-    func tableView(tableView: UITableView, reorderRowAtIndexPath sourceIndexPath: NSIndexPath, toIndexPath destinationIndexPath: NSIndexPath) {
-        let item = sectionedItems[sourceIndexPath.section].items[sourceIndexPath.row]
-        sectionedItems[sourceIndexPath.section].items.removeAtIndex(sourceIndexPath.row)
-        sectionedItems[destinationIndexPath.section].items.insert(item, atIndex: destinationIndexPath.row)
+    func tableView(_ tableView: UITableView, reorderRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
+        let item = sectionedItems[(sourceIndexPath as NSIndexPath).section].items[(sourceIndexPath as NSIndexPath).row]
+        sectionedItems[(sourceIndexPath as NSIndexPath).section].items.remove(at: (sourceIndexPath as NSIndexPath).row)
+        sectionedItems[(destinationIndexPath as NSIndexPath).section].items.insert(item, at: (destinationIndexPath as NSIndexPath).row)
     }
     
 }

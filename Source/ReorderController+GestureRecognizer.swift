@@ -24,17 +24,17 @@ import UIKit
 
 extension ReorderController {
 
-    @objc internal func handleReorderGesture(gestureRecognizer: UIGestureRecognizer) {
-        let gestureLocation = gestureRecognizer.locationInView(tableView)
+    @objc internal func handleReorderGesture(_ gestureRecognizer: UIGestureRecognizer) {
+        let gestureLocation = gestureRecognizer.location(in: tableView)
         
         switch gestureRecognizer.state {
-        case .Began:
-            beginReorderWithTouchPoint(gestureLocation)
+        case .began:
+            beginReorder(touchPoint: gestureLocation)
             
-        case .Changed:
-            updateReorderWithTouchPoint(gestureLocation)
+        case .changed:
+            updateReorder(touchPoint: gestureLocation)
             
-        case .Ended, .Cancelled, .Failed, .Possible:
+        case .ended, .cancelled, .failed, .possible:
             endReorder()
         }
     }
@@ -43,13 +43,13 @@ extension ReorderController {
 
 extension ReorderController: UIGestureRecognizerDelegate {
     
-    public func gestureRecognizerShouldBegin(gestureRecognizer: UIGestureRecognizer) -> Bool {
+    public func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
         guard let tableView = tableView else { return false }
         
-        let gestureLocation = gestureRecognizer.locationInView(tableView)
-        guard let indexPath = tableView.indexPathForRowAtPoint(gestureLocation) else { return false }
+        let gestureLocation = gestureRecognizer.location(in: tableView)
+        guard let indexPath = tableView.indexPathForRow(at: gestureLocation) else { return false }
         
-        return delegate?.tableView?(tableView, canReorderRowAtIndexPath: indexPath) ?? true
+        return delegate?.tableView(tableView, canReorderRowAt: indexPath) ?? true
     }
     
 }

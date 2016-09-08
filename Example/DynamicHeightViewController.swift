@@ -34,13 +34,13 @@ class DynamicHeightCell: UITableViewCell {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = .systemFontOfSize(15)
+        label.font = .systemFont(ofSize: 15)
         label.numberOfLines = 0
         contentView.addSubview(label)
         
         let views = ["label": label]
-        contentView.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("H:|-20-[label]-20-|", options: [], metrics: nil, views: views))
-        contentView.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("V:|-10-[label]-10-|", options: [], metrics: nil, views: views))
+        contentView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-20-[label]-20-|", options: [], metrics: nil, views: views))
+        contentView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-10-[label]-10-|", options: [], metrics: nil, views: views))
     }
     
 }
@@ -61,7 +61,7 @@ class DynamicHeightViewController: UITableViewController {
     }
     
     init() {
-        super.init(style: .Grouped)
+        super.init(style: .grouped)
     }
     
     override func viewDidLoad() {
@@ -69,7 +69,7 @@ class DynamicHeightViewController: UITableViewController {
         
         title = "Dynamic Height"
         
-        tableView.registerClass(DynamicHeightCell.self, forCellReuseIdentifier: "cell")
+        tableView.register(DynamicHeightCell.self, forCellReuseIdentifier: "cell")
         tableView.allowsSelection = false
         tableView.rowHeight = UITableViewAutomaticDimension
         tableView.estimatedRowHeight = 44
@@ -80,17 +80,17 @@ class DynamicHeightViewController: UITableViewController {
 
 extension DynamicHeightViewController {
     
-    override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return items.count
     }
     
-    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        if let spacer = tableView.reorder.spacerCellForIndexPath(indexPath) {
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        if let spacer = tableView.reorder.spacerCell(for: indexPath) {
             return spacer
         }
         
-        let cell = tableView.dequeueReusableCellWithIdentifier("cell", forIndexPath: indexPath) as! DynamicHeightCell
-        cell.label.text = items[indexPath.row]
+        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! DynamicHeightCell
+        cell.label.text = items[(indexPath as NSIndexPath).row]
         
         return cell
     }
@@ -99,10 +99,10 @@ extension DynamicHeightViewController {
 
 extension DynamicHeightViewController: TableViewReorderDelegate {
     
-    func tableView(tableView: UITableView, reorderRowAtIndexPath sourceIndexPath: NSIndexPath, toIndexPath destinationIndexPath: NSIndexPath) {
-        let item = items[sourceIndexPath.row]
-        items.removeAtIndex(sourceIndexPath.row)
-        items.insert(item, atIndex: destinationIndexPath.row)
+    func tableView(_ tableView: UITableView, reorderRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
+        let item = items[(sourceIndexPath as NSIndexPath).row]
+        items.remove(at: (sourceIndexPath as NSIndexPath).row)
+        items.insert(item, at: (destinationIndexPath as NSIndexPath).row)
     }
     
 }

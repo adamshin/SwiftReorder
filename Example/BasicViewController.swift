@@ -31,7 +31,7 @@ class BasicViewController: UITableViewController {
     }
     
     init() {
-        super.init(style: .Plain)
+        super.init(style: .plain)
     }
 
     override func viewDidLoad() {
@@ -39,7 +39,7 @@ class BasicViewController: UITableViewController {
         
         title = "Basic"
 
-        tableView.registerClass(UITableViewCell.self, forCellReuseIdentifier: "cell")
+        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
         tableView.allowsSelection = false
         tableView.reorder.delegate = self
     }
@@ -48,16 +48,16 @@ class BasicViewController: UITableViewController {
 
 extension BasicViewController {
     
-    override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return items.count
     }
     
-    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        if let spacer = tableView.reorder.spacerCellForIndexPath(indexPath) {
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        if let spacer = tableView.reorder.spacerCell(for: indexPath) {
             return spacer
         }
         
-        let cell = tableView.dequeueReusableCellWithIdentifier("cell", forIndexPath: indexPath)
+        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
         cell.textLabel?.text = items[indexPath.row]
         
         return cell
@@ -67,10 +67,10 @@ extension BasicViewController {
 
 extension BasicViewController: TableViewReorderDelegate {
 
-    func tableView(tableView: UITableView, reorderRowAtIndexPath sourceIndexPath: NSIndexPath, toIndexPath destinationIndexPath: NSIndexPath) {
-        let item = items[sourceIndexPath.row]
-        items.removeAtIndex(sourceIndexPath.row)
-        items.insert(item, atIndex: destinationIndexPath.row)
+    func tableView(_ tableView: UITableView, reorderRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
+        let item = items[(sourceIndexPath as NSIndexPath).row]
+        items.remove(at: (sourceIndexPath as NSIndexPath).row)
+        items.insert(item, at: (destinationIndexPath as NSIndexPath).row)
     }
     
 }

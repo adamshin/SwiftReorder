@@ -26,14 +26,14 @@ private let autoScrollThreshold: CGFloat = 30
 private let autoScrollMinVelocity: CGFloat = 60
 private let autoScrollMaxVelocity: CGFloat = 280
 
-private func mapValue(value: CGFloat, inRangeWithMin minA: CGFloat, max maxA: CGFloat, toRangeWithMin minB: CGFloat, max maxB: CGFloat) -> CGFloat {
+private func mapValue(_ value: CGFloat, inRangeWithMin minA: CGFloat, max maxA: CGFloat, toRangeWithMin minB: CGFloat, max maxB: CGFloat) -> CGFloat {
     return (value - minA) * (maxB - minB) / (maxA - minA) + minB
 }
 
 extension ReorderController {
     
     internal func autoScrollVelocity() -> CGFloat {
-        guard let tableView = tableView, snapshotView = snapshotView else { return 0 }
+        guard let tableView = tableView, let snapshotView = snapshotView else { return 0 }
         
         let scrollBounds = UIEdgeInsetsInsetRect(tableView.bounds, tableView.contentInset)
         let distanceToTop = max(snapshotView.frame.minY - scrollBounds.minY, 0)
@@ -50,7 +50,7 @@ extension ReorderController {
 
     internal func activateAutoScrollDisplayLink() {
         autoScrollDisplayLink = CADisplayLink(target: self, selector: #selector(handleDisplayLinkUpdate))
-        autoScrollDisplayLink?.addToRunLoop(NSRunLoop.mainRunLoop(), forMode: NSDefaultRunLoopMode)
+        autoScrollDisplayLink?.add(to: RunLoop.main, forMode: RunLoopMode.defaultRunLoopMode)
         lastAutoScrollTimeStamp = nil
     }
 
@@ -60,8 +60,8 @@ extension ReorderController {
         lastAutoScrollTimeStamp = nil
     }
 
-    @objc internal func handleDisplayLinkUpdate(displayLink: CADisplayLink) {
-        guard let tableView = tableView, snapshotView = snapshotView else { return }
+    @objc internal func handleDisplayLinkUpdate(_ displayLink: CADisplayLink) {
+        guard let tableView = tableView, let snapshotView = snapshotView else { return }
         
         if let lastAutoScrollTimeStamp = lastAutoScrollTimeStamp {
             let scrollVelocity = autoScrollVelocity()

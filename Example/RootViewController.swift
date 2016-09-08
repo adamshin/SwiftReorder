@@ -25,14 +25,14 @@ import UIKit
 class RootViewController: UITableViewController {
     
     enum Row: Int {
-        case Basic = 0
-        case Grouped
-        case LongList
-        case DynamicHeight
-        case NonMovable
-        case Effects
+        case basic = 0
+        case grouped
+        case longList
+        case dynamicHeight
+        case nonMovable
+        case effects
         
-        case Count
+        case count
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -40,64 +40,64 @@ class RootViewController: UITableViewController {
     }
     
     init() {
-        super.init(style: .Grouped)
+        super.init(style: .grouped)
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         title = "SwiftReorder"
-        navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .Plain, target: nil, action: nil)
-        tableView.registerClass(UITableViewCell.self, forCellReuseIdentifier: "cell")
+        navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
+        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
     }
     
 }
 
 extension RootViewController {
 
-    override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return Row.Count.rawValue
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return Row.count.rawValue
     }
     
-    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier("cell", forIndexPath: indexPath)
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
         
-        switch Row(rawValue: indexPath.row) ?? .Count {
-        case .Basic:
+        switch Row(rawValue: (indexPath as NSIndexPath).row) ?? .count {
+        case .basic:
             cell.textLabel?.text = "Basic"
-        case .Grouped:
+        case .grouped:
             cell.textLabel?.text = "Grouped"
-        case .LongList:
+        case .longList:
             cell.textLabel?.text = "Long List"
-        case .DynamicHeight:
+        case .dynamicHeight:
             cell.textLabel?.text = "Dynamic Height"
-        case .NonMovable:
+        case .nonMovable:
             cell.textLabel?.text = "Non-Movable"
-        case .Effects:
+        case .effects:
             cell.textLabel?.text = "Effects"
-        case .Count:
+        case .count:
             break
         }
         
-        cell.accessoryType = .DisclosureIndicator
+        cell.accessoryType = .disclosureIndicator
         return cell
     }
     
-    override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        switch Row(rawValue: indexPath.row) ?? .Count {
-        case .Basic:
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        switch Row(rawValue: (indexPath as NSIndexPath).row) ?? .count {
+        case .basic:
             navigationController?.pushViewController(BasicViewController(), animated: true)
-        case .Grouped:
+        case .grouped:
             navigationController?.pushViewController(GroupedViewController(), animated: true)
-        case .LongList:
+        case .longList:
             navigationController?.pushViewController(LongListViewController(), animated: true)
-        case .DynamicHeight:
+        case .dynamicHeight:
             navigationController?.pushViewController(DynamicHeightViewController(), animated: true)
-        case .NonMovable:
+        case .nonMovable:
             navigationController?.pushViewController(NonMovableViewController(), animated: true)
-        case .Effects:
+        case .effects:
             navigationController?.pushViewController(EffectsViewController(), animated: true)
-        case .Count:
+        case .count:
             break
         }
     }
