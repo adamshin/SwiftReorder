@@ -22,6 +22,14 @@
 
 import UIKit
 
+extension CGRect {
+    
+    init(center: CGPoint, size: CGSize) {
+        self.init(x: center.x - (size.width / 2), y: center.y - (size.height / 2), width: size.width, height: size.height)
+    }
+    
+}
+
 extension ReorderController {
     
     internal func updateDestinationRow() {
@@ -47,13 +55,15 @@ extension ReorderController {
         guard case let .reordering(_, destinationRow, _) = reorderState else { return nil }
         guard let tableView = tableView, let snapshotView = snapshotView else { return nil }
         
+        let snapshotFrame = CGRect(center: snapshotView.center, size: snapshotView.bounds.size)
+        
         let rowSnapDistances = tableView.indexPathsForVisibleRows?.map { path -> (path: IndexPath, distance: CGFloat) in
             let rect = tableView.rectForRow(at: path)
             
             if (destinationRow as NSIndexPath).compare(path) == .orderedAscending {
-                return (path, abs(snapshotView.frame.maxY - rect.maxY))
+                return (path, abs(snapshotFrame.maxY - rect.maxY))
             } else {
-                return (path, abs(snapshotView.frame.minY - rect.minY))
+                return (path, abs(snapshotFrame.minY - rect.minY))
             }
         } ?? []
         
@@ -69,7 +79,7 @@ extension ReorderController {
                 }
                 
                 let path = IndexPath(row: 0, section: section)
-                return (path, abs(snapshotView.frame.maxY - rect.minY))
+                return (path, abs(snapshotFrame.maxY - rect.minY))
             }
             else if section < (destinationRow as NSIndexPath).section {
                 let rect: CGRect
@@ -80,7 +90,7 @@ extension ReorderController {
                 }
                 
                 let path = IndexPath(row: rowsInSection, section: section)
-                return (path, abs(snapshotView.frame.minY - rect.maxY))
+                return (path, abs(snapshotFrame.minY - rect.maxY))
             }
             else {
                 return nil
