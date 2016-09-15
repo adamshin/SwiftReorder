@@ -60,7 +60,7 @@ extension ReorderController {
         let rowSnapDistances = tableView.indexPathsForVisibleRows?.map { path -> (path: IndexPath, distance: CGFloat) in
             let rect = tableView.rectForRow(at: path)
             
-            if (destinationRow as NSIndexPath).compare(path) == .orderedAscending {
+            if destinationRow.compare(path) == .orderedAscending {
                 return (path, abs(snapshotFrame.maxY - rect.maxY))
             } else {
                 return (path, abs(snapshotFrame.minY - rect.minY))
@@ -70,7 +70,7 @@ extension ReorderController {
         let sectionSnapDistances = (0..<tableView.numberOfSections).flatMap { section -> (path: IndexPath, distance: CGFloat)? in
             let rowsInSection = tableView.numberOfRows(inSection: section)
             
-            if section > (destinationRow as NSIndexPath).section {
+            if section > destinationRow.section {
                 let rect: CGRect
                 if rowsInSection == 0 {
                     rect = rectForEmptySection(section)
@@ -81,7 +81,7 @@ extension ReorderController {
                 let path = IndexPath(row: 0, section: section)
                 return (path, abs(snapshotFrame.maxY - rect.minY))
             }
-            else if section < (destinationRow as NSIndexPath).section {
+            else if section < destinationRow.section {
                 let rect: CGRect
                 if rowsInSection == 0 {
                     rect = rectForEmptySection(section)

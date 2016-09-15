@@ -62,7 +62,7 @@ extension RootViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
         
-        switch Row(rawValue: (indexPath as NSIndexPath).row) ?? .count {
+        switch Row(rawValue: indexPath.row) ?? .count {
         case .basic:
             cell.textLabel?.text = "Basic"
         case .grouped:
@@ -84,7 +84,7 @@ extension RootViewController {
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        switch Row(rawValue: (indexPath as NSIndexPath).row) ?? .count {
+        switch Row(rawValue: indexPath.row) ?? .count {
         case .basic:
             navigationController?.pushViewController(BasicViewController(), animated: true)
         case .grouped:

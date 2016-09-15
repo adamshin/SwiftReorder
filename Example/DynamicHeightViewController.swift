@@ -90,7 +90,7 @@ extension DynamicHeightViewController {
         }
         
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! DynamicHeightCell
-        cell.label.text = items[(indexPath as NSIndexPath).row]
+        cell.label.text = items[indexPath.row]
         
         return cell
     }
@@ -100,9 +100,9 @@ extension DynamicHeightViewController {
 extension DynamicHeightViewController: TableViewReorderDelegate {
     
     func tableView(_ tableView: UITableView, reorderRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
-        let item = items[(sourceIndexPath as NSIndexPath).row]
-        items.remove(at: (sourceIndexPath as NSIndexPath).row)
-        items.insert(item, at: (destinationIndexPath as NSIndexPath).row)
+        let item = items[sourceIndexPath.row]
+        items.remove(at: sourceIndexPath.row)
+        items.insert(item, at: destinationIndexPath.row)
     }
     
 }

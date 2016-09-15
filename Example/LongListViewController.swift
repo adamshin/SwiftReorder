@@ -58,7 +58,7 @@ extension LongListViewController {
         }
         
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
-        cell.textLabel?.text = items[(indexPath as NSIndexPath).row]
+        cell.textLabel?.text = items[indexPath.row]
         
         return cell
     }
@@ -68,9 +68,9 @@ extension LongListViewController {
 extension LongListViewController: TableViewReorderDelegate {
     
     func tableView(_ tableView: UITableView, reorderRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
-        let item = items[(sourceIndexPath as NSIndexPath).row]
-        items.remove(at: (sourceIndexPath as NSIndexPath).row)
-        items.insert(item, at: (destinationIndexPath as NSIndexPath).row)
+        let item = items[sourceIndexPath.row]
+        items.remove(at: sourceIndexPath.row)
+        items.insert(item, at: destinationIndexPath.row)
     }
     
 }

@@ -71,7 +71,7 @@ extension NonMovableViewController {
         
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
         cell.backgroundColor = .white
-        cell.textLabel?.text = sectionedItems[(indexPath as NSIndexPath).section].items[(indexPath as NSIndexPath).row]
+        cell.textLabel?.text = sectionedItems[indexPath.section].items[indexPath.row]
         
         return cell
     }
@@ -81,13 +81,13 @@ extension NonMovableViewController {
 extension NonMovableViewController: TableViewReorderDelegate {
     
     func tableView(_ tableView: UITableView, reorderRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
-        let item = sectionedItems[(sourceIndexPath as NSIndexPath).section].items[(sourceIndexPath as NSIndexPath).row]
-        sectionedItems[(sourceIndexPath as NSIndexPath).section].items.remove(at: (sourceIndexPath as NSIndexPath).row)
-        sectionedItems[(destinationIndexPath as NSIndexPath).section].items.insert(item, at: (destinationIndexPath as NSIndexPath).row)
+        let item = sectionedItems[sourceIndexPath.section].items[sourceIndexPath.row]
+        sectionedItems[sourceIndexPath.section].items.remove(at: sourceIndexPath.row)
+        sectionedItems[destinationIndexPath.section].items.insert(item, at: destinationIndexPath.row)
     }
     
     func tableView(_ tableView: UITableView, canReorderRowAt indexPath: IndexPath) -> Bool {
-        return (indexPath as NSIndexPath).section != 1
+        return indexPath.section != 1
     }
     
 }
