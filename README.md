@@ -19,7 +19,7 @@ SwiftReorder is a UITableView extension that lets you easily add drag-and-drop r
 To integrate SwiftReorder into your Xcode project using CocoaPods, specify it in your `Podfile`:
 
 ```ruby
-pod 'SwiftReorder', '~> 1.0'
+pod 'SwiftReorder', '~> 2.0'
 ```
 
 ### Manually
@@ -34,15 +34,15 @@ You can integrate SwiftReorder into your project manually by copying the content
 ```swift
 tableView.reorder.delegate = self
 ```
-* Add this code to the beginning of your `tableView(_:cellForRowAtIndexPath:)`.
+* Add this code to the beginning of your `tableView(_:cellForRowAt:)`.
 ```swift
-if let spacer = tableView.reorder.spacerCellForIndexPath(indexPath) {
+if let spacer = tableView.reorder.spacerCell(for: indexPath) {
     return spacer
 }
 ```
 * Implement this `TableViewReorderDelegate` method, and others as necessary.
 ```swift
-tableView(_:reorderRowAtIndexPath:toIndexPath:)
+tableView(_:reorderRowAt:to:)
 ```
 
 ### Customization
