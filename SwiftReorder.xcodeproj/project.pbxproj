@@ -13,7 +13,6 @@
 		66DF25171D8080A000C19289 /* ReorderController+SnapshotView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66DF25131D8080A000C19289 /* ReorderController+SnapshotView.swift */; };
 		66FC50F11D5EE49D00CFCCCE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66FC50E81D5EE49D00CFCCCE /* AppDelegate.swift */; };
 		66FC50F21D5EE49D00CFCCCE /* BasicViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66FC50E91D5EE49D00CFCCCE /* BasicViewController.swift */; };
-		66FC50F31D5EE49D00CFCCCE /* DynamicHeightViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66FC50EA1D5EE49D00CFCCCE /* DynamicHeightViewController.swift */; };
 		66FC50F41D5EE49D00CFCCCE /* EffectsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66FC50EB1D5EE49D00CFCCCE /* EffectsViewController.swift */; };
 		66FC50F51D5EE49D00CFCCCE /* GroupedViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66FC50EC1D5EE49D00CFCCCE /* GroupedViewController.swift */; };
 		66FC50F71D5EE49D00CFCCCE /* LongListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66FC50EE1D5EE49D00CFCCCE /* LongListViewController.swift */; };
@@ -31,7 +30,6 @@
 		66DF25131D8080A000C19289 /* ReorderController+SnapshotView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "ReorderController+SnapshotView.swift"; path = "Source/ReorderController+SnapshotView.swift"; sourceTree = "<group>"; };
 		66FC50E81D5EE49D00CFCCCE /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = Example/AppDelegate.swift; sourceTree = SOURCE_ROOT; };
 		66FC50E91D5EE49D00CFCCCE /* BasicViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = BasicViewController.swift; path = Example/BasicViewController.swift; sourceTree = SOURCE_ROOT; };
-		66FC50EA1D5EE49D00CFCCCE /* DynamicHeightViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DynamicHeightViewController.swift; path = Example/DynamicHeightViewController.swift; sourceTree = SOURCE_ROOT; };
 		66FC50EB1D5EE49D00CFCCCE /* EffectsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = EffectsViewController.swift; path = Example/EffectsViewController.swift; sourceTree = SOURCE_ROOT; };
 		66FC50EC1D5EE49D00CFCCCE /* GroupedViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = GroupedViewController.swift; path = Example/GroupedViewController.swift; sourceTree = SOURCE_ROOT; };
 		66FC50ED1D5EE49D00CFCCCE /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = Example/Info.plist; sourceTree = SOURCE_ROOT; };
@@ -77,7 +75,6 @@
 				66FC50F01D5EE49D00CFCCCE /* RootViewController.swift */,
 				66FC50E91D5EE49D00CFCCCE /* BasicViewController.swift */,
 				66FC50EC1D5EE49D00CFCCCE /* GroupedViewController.swift */,
-				66FC50EA1D5EE49D00CFCCCE /* DynamicHeightViewController.swift */,
 				66FC50EB1D5EE49D00CFCCCE /* EffectsViewController.swift */,
 				66FC50EE1D5EE49D00CFCCCE /* LongListViewController.swift */,
 				66FC50EF1D5EE49D00CFCCCE /* NonMovableViewController.swift */,
@@ -172,7 +169,6 @@
 				66FC50F91D5EE49D00CFCCCE /* RootViewController.swift in Sources */,
 				66DF25161D8080A000C19289 /* ReorderController+GestureRecognizer.swift in Sources */,
 				66FC50FD1D5EE4D600CFCCCE /* ReorderController.swift in Sources */,
-				66FC50F31D5EE49D00CFCCCE /* DynamicHeightViewController.swift in Sources */,
 				66DF25141D8080A000C19289 /* ReorderController+AutoScroll.swift in Sources */,
 				66FC50F81D5EE49D00CFCCCE /* NonMovableViewController.swift in Sources */,
 				66DF25151D8080A000C19289 /* ReorderController+DestinationRow.swift in Sources */,

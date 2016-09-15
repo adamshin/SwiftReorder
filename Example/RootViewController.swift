@@ -28,7 +28,6 @@ class RootViewController: UITableViewController {
         case basic = 0
         case grouped
         case longList
-        case dynamicHeight
         case nonMovable
         case effects
         
@@ -69,8 +68,6 @@ extension RootViewController {
             cell.textLabel?.text = "Grouped"
         case .longList:
             cell.textLabel?.text = "Long List"
-        case .dynamicHeight:
-            cell.textLabel?.text = "Dynamic Height"
         case .nonMovable:
             cell.textLabel?.text = "Non-Movable"
         case .effects:
@@ -91,8 +88,6 @@ extension RootViewController {
             navigationController?.pushViewController(GroupedViewController(), animated: true)
         case .longList:
             navigationController?.pushViewController(LongListViewController(), animated: true)
-        case .dynamicHeight:
-            navigationController?.pushViewController(DynamicHeightViewController(), animated: true)
         case .nonMovable:
             navigationController?.pushViewController(NonMovableViewController(), animated: true)
         case .effects:

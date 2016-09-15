@@ -8,7 +8,6 @@ SwiftReorder is a UITableView extension that lets you easily add drag-and-drop r
 
 - [x] Smooth animations
 - [x] Automatic edge scrolling
-- [x] Supports dynamically sized cells
 - [x] Works with multiple table sections
 - [x] Customizable shadow, scaling, and transparency effects
 
