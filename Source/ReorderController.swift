@@ -71,7 +71,7 @@ public protocol TableViewReorderDelegate: class {
     
 }
 
-extension TableViewReorderDelegate {
+public extension TableViewReorderDelegate {
     
     func tableView(_ tableView: UITableView, canReorderRowAt indexPath: IndexPath) -> Bool {
         return true
