@@ -261,7 +261,17 @@ public class ReorderController: NSObject {
         guard let snapshotView = snapshotView else { return nil }
         
         let cell = UITableViewCell()
-        cell.heightAnchor.constraint(equalToConstant: snapshotView.bounds.height).isActive = true
+        let height = snapshotView.bounds.height
+        
+        NSLayoutConstraint(
+            item: cell,
+            attribute: .height,
+            relatedBy: .equal,
+            toItem: nil,
+            attribute: .notAnAttribute,
+            multiplier: 0,
+            constant: height
+        ).isActive = true
         
         let hideCell: Bool
         switch spacerCellStyle {
