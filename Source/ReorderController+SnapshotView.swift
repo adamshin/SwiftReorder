@@ -24,39 +24,45 @@ import UIKit
 
 extension ReorderController {
     
-    internal func createSnapshotViewForCell(at indexPath: IndexPath) {
-        removeSnapshotView()
-        self.tableView?.reloadData()
+    func createSnapshotViewForCell(at indexPath: IndexPath) {
+        guard let tableView = tableView else { return }
         
-        guard let cell = tableView?.cellForRow(at: indexPath) else { return }
+        removeSnapshotView()
+        tableView.reloadData()
+        
+        guard let cell = tableView.cellForRow(at: indexPath) else { return }
         
         UIGraphicsBeginImageContextWithOptions(cell.bounds.size, false, 0)
+        
         cell.layer.render(in: UIGraphicsGetCurrentContext()!)
         let image = UIGraphicsGetImageFromCurrentImageContext()
+        
         UIGraphicsEndImageContext()
         
-        let snapshotView = UIImageView(image: image)
-        snapshotView.frame = cell.frame
+        let view = UIImageView(image: image)
+        view.frame = cell.frame
         
-        snapshotView.layer.masksToBounds = false
-        snapshotView.layer.opacity = Float(cellOpacity)
-        snapshotView.layer.transform = CATransform3DMakeScale(cellScale, cellScale, 1)
+        view.layer.masksToBounds = false
+        view.layer.opacity = Float(cellOpacity)
+        view.layer.transform = CATransform3DMakeScale(cellScale, cellScale, 1)
         
-        snapshotView.layer.shadowColor = shadowColor.cgColor
-        snapshotView.layer.shadowOpacity = Float(shadowOpacity)
-        snapshotView.layer.shadowRadius = shadowRadius
-        snapshotView.layer.shadowOffset = shadowOffset
+        view.layer.shadowColor = shadowColor.cgColor
+        view.layer.shadowOpacity = Float(shadowOpacity)
+        view.layer.shadowRadius = shadowRadius
+        view.layer.shadowOffset = shadowOffset
         
-        tableView?.addSubview(snapshotView)
-        self.snapshotView = snapshotView
+        tableView.addSubview(view)
+        snapshotView = view
     }
     
-    internal func removeSnapshotView() {
+    func removeSnapshotView() {
         snapshotView?.removeFromSuperview()
         snapshotView = nil
     }
     
-    internal func animateSnapshotViewIn() {
+    func animateSnapshotViewIn() {
+        guard let snapshotView = snapshotView else { return }
+        
         let opacityAnimation = CABasicAnimation(keyPath: "opacity")
         opacityAnimation.fromValue = 1
         opacityAnimation.toValue = cellOpacity
@@ -73,12 +79,14 @@ extension ReorderController {
         transformAnimation.duration = animationDuration
         transformAnimation.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
         
-        snapshotView?.layer.add(opacityAnimation, forKey: nil)
-        snapshotView?.layer.add(shadowAnimation, forKey: nil)
-        snapshotView?.layer.add(transformAnimation, forKey: nil)
+        snapshotView.layer.add(opacityAnimation, forKey: nil)
+        snapshotView.layer.add(shadowAnimation, forKey: nil)
+        snapshotView.layer.add(transformAnimation, forKey: nil)
     }
     
-    internal func animateSnapshotViewOut() {
+    func animateSnapshotViewOut() {
+        guard let snapshotView = snapshotView else { return }
+        
         let opacityAnimation = CABasicAnimation(keyPath: "opacity")
         opacityAnimation.fromValue = cellOpacity
         opacityAnimation.toValue = 1
@@ -95,13 +103,13 @@ extension ReorderController {
         transformAnimation.duration = animationDuration
         transformAnimation.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
         
-        snapshotView?.layer.add(opacityAnimation, forKey: nil)
-        snapshotView?.layer.add(shadowAnimation, forKey: nil)
-        snapshotView?.layer.add(transformAnimation, forKey: nil)
+        snapshotView.layer.add(opacityAnimation, forKey: nil)
+        snapshotView.layer.add(shadowAnimation, forKey: nil)
+        snapshotView.layer.add(transformAnimation, forKey: nil)
         
-        snapshotView?.layer.opacity = 1
-        snapshotView?.layer.shadowOpacity = 0
-        snapshotView?.layer.transform = CATransform3DIdentity
+        snapshotView.layer.opacity = 1
+        snapshotView.layer.shadowOpacity = 0
+        snapshotView.layer.transform = CATransform3DIdentity
     }
 
 }
