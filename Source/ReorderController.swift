@@ -66,6 +66,8 @@ public protocol TableViewReorderDelegate: class {
     /**
      Tells the delegate that the user has finished reordering.
      - Parameter tableView: The table view providing this information.
+     - Parameter initSource: The index path of the row to be moved when begin draging
+     - Parameter finalDestination: The index path of the row's new location when finish reordering
      */
     func tableViewDidFinishReordering(_ tableView: UITableView, initSource: IndexPath, finalDestination: IndexPath)
     
