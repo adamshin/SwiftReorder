@@ -67,7 +67,7 @@ public protocol TableViewReorderDelegate: class {
      Tells the delegate that the user has finished reordering.
      - Parameter tableView: The table view providing this information.
      */
-    func tableViewDidFinishReordering(_ tableView: UITableView)
+    func tableViewDidFinishReordering(_ tableView: UITableView, initSource: IndexPath, finalDestination: IndexPath)
     
 }
 
@@ -80,7 +80,7 @@ public extension TableViewReorderDelegate {
     func tableViewDidBeginReordering(_ tableView: UITableView) {
     }
     
-    func tableViewDidFinishReordering(_ tableView: UITableView) {
+    func tableViewDidFinishReordering(_ tableView: UITableView, initSource: IndexPath, finalDestination: IndexPath) {
     }
     
 }
@@ -128,10 +128,10 @@ public class ReorderController: NSObject {
     public var spacerCellStyle: ReorderSpacerCellStyle = .automatic
     
     /// The initial source indexPath
-    public var initialSourceIndexPath: IndexPath?
+    private var initialSourceIndexPath: IndexPath?
     
     /// The final destination indexPath
-    public var finalDestinationIndexPath: IndexPath?
+    private var finalDestinationIndexPath: IndexPath?
     
     /**
      Returns a `UITableViewCell` if the table view should display a spacer cell at the given index path.
@@ -260,7 +260,7 @@ public class ReorderController: NSObject {
         animateSnapshotViewOut()
         clearAutoScrollDisplayLink()
         
-        delegate?.tableViewDidFinishReordering(tableView)
+        delegate?.tableViewDidFinishReordering(tableView, initSource: initialSourceIndexPath!, finalDestination: finalDestinationIndexPath!)
     }
     
     // MARK: - Spacer cell
