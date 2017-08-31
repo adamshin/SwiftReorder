@@ -129,12 +129,6 @@ public class ReorderController: NSObject {
     /// The spacer cell style.
     public var spacerCellStyle: ReorderSpacerCellStyle = .automatic
     
-    /// The initial source indexPath
-    private var initialSourceIndexPath: IndexPath?
-    
-    /// The final destination indexPath
-    private var finalDestinationIndexPath: IndexPath?
-    
     /**
      Returns a `UITableViewCell` if the table view should display a spacer cell at the given index path.
      
@@ -204,7 +198,6 @@ public class ReorderController: NSObject {
             delegate.tableView(tableView, canReorderRowAt: sourceRow)
         else { return }
         
-        initialSourceIndexPath = sourceRow
         createSnapshotViewForCell(at: sourceRow)
         animateSnapshotViewIn()
         activateAutoScrollDisplayLink()
@@ -229,7 +222,7 @@ public class ReorderController: NSObject {
     }
     
     func endReorder() {
-        guard case let .reordering(_, destinationRow, _) = reorderState,
+        guard case let .reordering(sourceRow , destinationRow, _) = reorderState,
             let tableView = tableView
         else { return }
         
@@ -258,11 +251,10 @@ public class ReorderController: NSObject {
                 }
             }
         )
-        finalDestinationIndexPath = destinationRow
         animateSnapshotViewOut()
         clearAutoScrollDisplayLink()
         
-        delegate?.tableViewDidFinishReordering(tableView, initSource: initialSourceIndexPath!, finalDestination: finalDestinationIndexPath!)
+        delegate?.tableViewDidFinishReordering(tableView, initSource: sourceRow, finalDestination: destinationRow)
     }
     
     // MARK: - Spacer cell
