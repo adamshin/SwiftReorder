@@ -69,7 +69,7 @@ public protocol TableViewReorderDelegate: class {
      - Parameter initSource: The index path of the row to be moved when begin draging
      - Parameter finalDestination: The index path of the row's new location when finish reordering
      */
-    func tableViewDidFinishReordering(_ tableView: UITableView, initSource: IndexPath, finalDestination: IndexPath)
+    func tableViewDidFinishReordering(_ tableView: UITableView, from initialSourceIndexPath: IndexPath, to finalDestinationIndexPath: IndexPath)
     
 }
 
@@ -82,7 +82,7 @@ public extension TableViewReorderDelegate {
     func tableViewDidBeginReordering(_ tableView: UITableView) {
     }
     
-    func tableViewDidFinishReordering(_ tableView: UITableView, initSource: IndexPath, finalDestination: IndexPath) {
+    func tableViewDidFinishReordering(_ tableView: UITableView, from initialSourceIndexPath: IndexPath, to finalDestinationIndexPath:IndexPath) {
     }
     
 }
@@ -254,7 +254,7 @@ public class ReorderController: NSObject {
         animateSnapshotViewOut()
         clearAutoScrollDisplayLink()
         
-        delegate?.tableViewDidFinishReordering(tableView, initSource: sourceRow, finalDestination: destinationRow)
+        delegate?.tableViewDidFinishReordering(tableView, from: sourceRow, to: destinationRow)
     }
     
     // MARK: - Spacer cell
