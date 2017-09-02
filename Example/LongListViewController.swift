@@ -72,5 +72,5 @@ extension LongListViewController: TableViewReorderDelegate {
         items.remove(at: sourceIndexPath.row)
         items.insert(item, at: destinationIndexPath.row)
     }
-    
+
 }
