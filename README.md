@@ -1,15 +1,15 @@
 # SwiftReorder
 
-SwiftReorder is a UITableView extension that lets you easily add drag-and-drop reordering to any table view. It's robust, lightweight, and completely customizable.
+SwiftReorder is a UITableView extension that lets you add long-press drag-and-drop reordering to any table view. It's robust, lightweight, and fully customizable.
 
 ![Demo](Resources/demo.gif)
 
 ## Features
 
-- [x] Smooth animations
-- [x] Automatic edge scrolling
-- [x] Works with multiple table sections
-- [x] Customizable shadow, scaling, and transparency effects
+- Smooth animations
+- Automatic edge scrolling
+- Works with multiple table sections
+- Customizable shadow, scaling, and transparency effects
 
 ## Installation
 
@@ -18,7 +18,7 @@ SwiftReorder is a UITableView extension that lets you easily add drag-and-drop r
 To integrate SwiftReorder into your Xcode project using CocoaPods, specify it in your `Podfile`:
 
 ```ruby
-pod 'SwiftReorder', '~> 2.0'
+pod 'SwiftReorder', '~> 3.0'
 ```
 
 ### Manually
@@ -31,18 +31,29 @@ You can integrate SwiftReorder into your project manually by copying the content
 
 * Add the following line to your table view setup.
 ```swift
-tableView.reorder.delegate = self
+override func viewDidLoad() {
+    // ...
+    tableView.reorder.delegate = self
+}
 ```
 * Add this code to the beginning of your `tableView(_:cellForRowAt:)`.
 ```swift
-if let spacer = tableView.reorder.spacerCell(for: indexPath) {
-    return spacer
+func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    if let spacer = tableView.reorder.spacerCell(for: indexPath) {
+        return spacer
+    }
+    // ...
 }
 ```
-* Implement this `TableViewReorderDelegate` method, and others as necessary.
+* Implement the `tableView(_:reorderRowAt:to:)` delegate method, and others as necessary.
 ```swift
-tableView(_:reorderRowAt:to:)
+extension MyViewController: TableViewReorderDelegate {
+    func tableView(_ tableView: UITableView, reorderRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
+        // Update data model
+    }
+}
 ```
+This method is analogous to the `UITableViewDataSource` method `tableView(_:moveRowAt:to:)`. However, it may be called multiple times in the course of one drag-and-drop action.
 
 ### Customization
 SwiftReorder exposes several properties for adjusting the style of the reordering effect. For example, you can add a scaling effect to the selected cell:
