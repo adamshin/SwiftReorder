@@ -183,6 +183,14 @@ public class ReorderController: NSObject {
         super.init()
         
         self.tableView = tableView
+        if #available(iOS 11.0, *) {
+            // in iOS 11.0, default is UITableViewAutomaticDimensionset to 0 to disable
+            self.tableView?.estimatedRowHeight = 0;
+            self.tableView?.estimatedSectionHeaderHeight = 0;
+            self.tableView?.estimatedSectionFooterHeight = 0;
+        } else {
+            // Fallback on earlier versions
+        }
         tableView.addGestureRecognizer(reorderGestureRecognizer)
         
         reorderState = .ready(snapshotRow: nil)
