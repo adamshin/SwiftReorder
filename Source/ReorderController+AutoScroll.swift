@@ -35,7 +35,13 @@ extension ReorderController {
     func autoScrollVelocity() -> CGFloat {
         guard let tableView = tableView, let snapshotView = snapshotView else { return 0 }
         
-        let scrollBounds = UIEdgeInsetsInsetRect(tableView.bounds, tableView.contentInset)
+        var actualContentInset = tableView.contentInset
+        if #available(iOS 11, *) {
+            actualContentInset.top += tableView.safeAreaInsets.top
+            actualContentInset.bottom += tableView.safeAreaInsets.bottom
+        }
+
+        let scrollBounds = UIEdgeInsetsInsetRect(tableView.bounds, actualContentInset)
         let distanceToTop = max(snapshotView.frame.minY - scrollBounds.minY, 0)
         let distanceToBottom = max(scrollBounds.maxY - snapshotView.frame.maxY, 0)
         
@@ -73,8 +79,14 @@ extension ReorderController {
                 let oldOffset = tableView.contentOffset
                 tableView.setContentOffset(CGPoint(x: oldOffset.x, y: oldOffset.y + CGFloat(scrollDelta)), animated: false)
                 
-                tableView.contentOffset.y = min(tableView.contentOffset.y, tableView.contentSize.height + tableView.contentInset.bottom - tableView.frame.height)
-                tableView.contentOffset.y = max(tableView.contentOffset.y, -tableView.contentInset.top)
+                var actualContentInset = tableView.contentInset
+                if #available(iOS 11, *) {
+                    actualContentInset.top += tableView.safeAreaInsets.top
+                    actualContentInset.bottom += tableView.safeAreaInsets.bottom
+                }
+                
+                tableView.contentOffset.y = min(tableView.contentOffset.y, tableView.contentSize.height + actualContentInset.bottom - tableView.frame.height)
+                tableView.contentOffset.y = max(tableView.contentOffset.y, -actualContentInset.top)
                 
                 let actualScrollDistance = tableView.contentOffset.y - oldOffset.y
                 snapshotView.frame.origin.y += actualScrollDistance
