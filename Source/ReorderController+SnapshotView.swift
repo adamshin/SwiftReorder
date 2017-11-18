@@ -60,9 +60,22 @@ extension ReorderController {
     }
     
     func updateSnapshotViewPosition() {
-        guard case .reordering(let context) = reorderState else { return }
+        guard case .reordering(let context) = reorderState, let tableView = tableView else { return }
         
-        snapshotView?.center.y = context.touchPosition.y + context.snapshotOffset
+        var newCenterY = context.touchPosition.y + context.snapshotOffset
+        
+        // TODO: Double-check this
+        let safeArea: CGRect
+        if #available(iOS 11, *) {
+            safeArea = UIEdgeInsetsInsetRect(tableView.frame, tableView.safeAreaInsets)
+        } else {
+            safeArea = tableView.frame
+        }
+        
+        newCenterY = min(newCenterY, safeArea.maxY)
+        newCenterY = max(newCenterY, safeArea.minY)
+        
+        snapshotView?.center.y = newCenterY
     }
     
     func animateSnapshotViewIn() {

@@ -22,9 +22,9 @@
 
 import UIKit
 
-private let autoScrollThreshold: CGFloat = 100
+private let autoScrollThreshold: CGFloat = 30
 private let autoScrollMinVelocity: CGFloat = 60
-private let autoScrollMaxVelocity: CGFloat = 80//280
+private let autoScrollMaxVelocity: CGFloat = 280
 
 private func mapValue(_ value: CGFloat, inRangeWithMin minA: CGFloat, max maxA: CGFloat, toRangeWithMin minB: CGFloat, max maxB: CGFloat) -> CGFloat {
     return (value - minA) * (maxB - minB) / (maxA - minA) + minB
@@ -37,7 +37,7 @@ extension ReorderController {
         
         guard autoScrollEnabled else { return 0 }
         
-        // Double-check this?
+        // TODO: Double-check this
         let safeAreaInset: UIEdgeInsets
         if #available(iOS 11, *) {
             safeAreaInset = tableView.safeAreaInsets
@@ -45,9 +45,10 @@ extension ReorderController {
             safeAreaInset = tableView.contentInset
         }
 
-        let scrollBounds = UIEdgeInsetsInsetRect(tableView.frame, safeAreaInset)
-        let distanceToTop = max(snapshotView.frame.minY - scrollBounds.minY, 0)
-        let distanceToBottom = max(scrollBounds.maxY - snapshotView.frame.maxY, 0)
+        let safeAreaFrame = UIEdgeInsetsInsetRect(tableView.frame, safeAreaInset)
+        
+        let distanceToTop = max(snapshotView.frame.minY - safeAreaFrame.minY, 0)
+        let distanceToBottom = max(safeAreaFrame.maxY - snapshotView.frame.maxY, 0)
         
         if distanceToTop < autoScrollThreshold {
             return mapValue(distanceToTop, inRangeWithMin: autoScrollThreshold, max: 0, toRangeWithMin: -autoScrollMinVelocity, max: -autoScrollMaxVelocity)
@@ -83,7 +84,7 @@ extension ReorderController {
                 let contentOffset = tableView.contentOffset
                 tableView.contentOffset = CGPoint(x: contentOffset.x, y: contentOffset.y + CGFloat(scrollDelta))
                 
-                // Double-check this?
+                // TODO: Double-check this
                 let contentInset: UIEdgeInsets
                 if #available(iOS 11, *) {
                     contentInset = tableView.adjustedContentInset
@@ -92,7 +93,7 @@ extension ReorderController {
                 }
                 
                 let minContentOffset = -contentInset.top
-                let maxContentOffset = tableView.contentSize.height + contentInset.bottom - tableView.frame.height
+                let maxContentOffset = tableView.contentSize.height - tableView.bounds.height + contentInset.bottom
                 
                 tableView.contentOffset.y = min(tableView.contentOffset.y, maxContentOffset)
                 tableView.contentOffset.y = max(tableView.contentOffset.y, minContentOffset)
