@@ -18,7 +18,7 @@ SwiftReorder is a UITableView extension that lets you add long-press drag-and-dr
 To integrate SwiftReorder into your Xcode project using CocoaPods, specify it in your `Podfile`:
 
 ```ruby
-pod 'SwiftReorder', '~> 3.0'
+pod 'SwiftReorder', '~> 3.1'
 ```
 
 ### Manually
