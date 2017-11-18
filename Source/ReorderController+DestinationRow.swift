@@ -62,14 +62,27 @@ extension ReorderController {
         let snapshotFrameInSuperview = CGRect(center: snapshotView.center, size: snapshotView.bounds.size)
         let snapshotFrame = superview.convert(snapshotFrameInSuperview, to: tableView)
         
-        let visibleRows = tableView.indexPathsForVisibleRows ?? []
-        let rowSnapDistances = visibleRows.map { path -> (path: IndexPath, distance: CGFloat) in
-            let rect = tableView.rectForRow(at: path)
+        let visibleCells = tableView.visibleCells.filter {
+            // Workaround for an iOS 11 bug.
+            
+            // When adding a row using UITableView.insertRows(...), if the new
+            // row's frame will be partially or fully outside the table view's
+            // bounds, and the new row is not the first row in the table view,
+            // it's inserted without animation.
+            
+            let cellOverlapsTopBounds = $0.frame.minY < tableView.bounds.minY + 5
+            let cellIsFirstCell = tableView.indexPath(for: $0) == IndexPath(row: 0, section: 0)
+            
+            return !cellOverlapsTopBounds || cellIsFirstCell
+        }
+        
+        let rowSnapDistances = visibleCells.map { cell -> (path: IndexPath, distance: CGFloat) in
+            let path = tableView.indexPath(for: cell) ?? IndexPath(row: 0, section: 0)
 
             if context.destinationRow.compare(path) == .orderedAscending {
-                return (path, abs(snapshotFrame.maxY - rect.maxY))
+                return (path, abs(snapshotFrame.maxY - cell.frame.maxY))
             } else {
-                return (path, abs(snapshotFrame.minY - rect.minY))
+                return (path, abs(snapshotFrame.minY - cell.frame.minY))
             }
         }
         
