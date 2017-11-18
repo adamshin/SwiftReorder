@@ -25,14 +25,16 @@ import UIKit
 extension ReorderController {
 
     @objc internal func handleReorderGesture(_ gestureRecognizer: UIGestureRecognizer) {
-        let gestureLocation = gestureRecognizer.location(in: tableView)
+        guard let superview = tableView?.superview else { return }
+        
+        let touchPosition = gestureRecognizer.location(in: superview)
         
         switch gestureRecognizer.state {
         case .began:
-            beginReorder(touchPoint: gestureLocation)
+            beginReorder(touchPosition: touchPosition)
             
         case .changed:
-            updateReorder(touchPoint: gestureLocation)
+            updateReorder(touchPosition: touchPosition)
             
         case .ended, .cancelled, .failed, .possible:
             endReorder()

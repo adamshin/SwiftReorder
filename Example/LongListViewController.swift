@@ -24,7 +24,7 @@ import UIKit
 
 class LongListViewController: UITableViewController {
     
-    var items = (1...50).map { "Item \($0)" }
+    var items = (1...100).map { "Item \($0)" }
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -42,6 +42,8 @@ class LongListViewController: UITableViewController {
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
         tableView.allowsSelection = false
         tableView.reorder.delegate = self
+        
+        navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
     }
     
 }

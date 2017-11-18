@@ -149,7 +149,7 @@ public class ReorderController: NSObject {
      - Returns: An optional `UITableViewCell`.
      */
     public func spacerCell(for indexPath: IndexPath) -> UITableViewCell? {
-        if case let .reordering(_, destinationRow, _) = reorderState, indexPath == destinationRow {
+        if case let .reordering(context) = reorderState, indexPath == context.destinationRow {
             return createSpacerCell()
         }
         else if case let .ready(snapshotRow) = reorderState, indexPath == snapshotRow {
@@ -160,9 +160,16 @@ public class ReorderController: NSObject {
     
     // MARK: - Internal state
     
+    struct ReorderContext {
+        var sourceRow: IndexPath
+        var destinationRow: IndexPath
+        var snapshotOffset: CGFloat
+        var touchPosition: CGPoint
+    }
+    
     enum ReorderState {
         case ready(snapshotRow: IndexPath?)
-        case reordering(sourceRow: IndexPath, destinationRow: IndexPath, snapshotOffset: CGFloat)
+        case reordering(context: ReorderContext)
     }
     
     weak var tableView: UITableView?
@@ -193,11 +200,16 @@ public class ReorderController: NSObject {
     
     // MARK: - Reordering
     
-    func beginReorder(touchPoint: CGPoint) {
+    func beginReorder(touchPosition: CGPoint) {
         guard case .ready = reorderState,
             let delegate = delegate,
             let tableView = tableView,
-            let sourceRow = tableView.indexPathForRow(at: touchPoint),
+            let superview = tableView.superview
+        else { return }
+        
+        let tableTouchPosition = superview.convert(touchPosition, to: tableView)
+        
+        guard let sourceRow = tableView.indexPathForRow(at: tableTouchPosition),
             delegate.tableView(tableView, canReorderRowAt: sourceRow)
         else { return }
         
@@ -207,42 +219,51 @@ public class ReorderController: NSObject {
         
         tableView.reloadData()
         
-        let snapshotOffset = (snapshotView?.center.y ?? 0) - touchPoint.y
-        reorderState = .reordering(
+        let snapshotOffset = (snapshotView?.center.y ?? 0) - touchPosition.y
+        
+        let context = ReorderContext(
             sourceRow: sourceRow,
             destinationRow: sourceRow,
-            snapshotOffset: snapshotOffset
+            snapshotOffset: snapshotOffset,
+            touchPosition: touchPosition
         )
+        reorderState = .reordering(context: context)
 
         delegate.tableViewDidBeginReordering(tableView)
     }
     
-    func updateReorder(touchPoint: CGPoint) {
-        guard case let .reordering(_, _, snapshotOffset) = reorderState else { return }
+    func updateReorder(touchPosition: CGPoint) {
+        guard case .reordering(let context) = reorderState else { return }
         
-        snapshotView?.center.y = touchPoint.y + snapshotOffset
+        var newContext = context
+        newContext.touchPosition = touchPosition
+        reorderState = .reordering(context: newContext)
+        
+        updateSnapshotViewPosition()
         updateDestinationRow()
     }
     
     func endReorder() {
-        guard case let .reordering(sourceRow, destinationRow, _) = reorderState,
-            let tableView = tableView
+        guard case .reordering(let context) = reorderState,
+            let tableView = tableView,
+            let superview = tableView.superview
         else { return }
         
-        reorderState = .ready(snapshotRow: destinationRow)
+        reorderState = .ready(snapshotRow: context.destinationRow)
         
-        let rect = tableView.rectForRow(at: destinationRow)
-        let rectCenter = CGPoint(x: rect.midX, y: rect.midY)
+        let cellRectInTableView = tableView.rectForRow(at: context.destinationRow)
+        let cellRect = tableView.convert(cellRectInTableView, to: superview)
+        let cellRectCenter = CGPoint(x: cellRect.midX, y: cellRect.midY)
         
         // If no values change inside a UIView animation block, the completion handler is called immediately.
         // This is a workaround for that case.
-        if snapshotView?.center == rectCenter {
+        if snapshotView?.center == cellRectCenter {
             snapshotView?.center.y += 0.1
         }
         
         UIView.animate(withDuration: animationDuration,
             animations: {
-                self.snapshotView?.center = CGPoint(x: rect.midX, y: rect.midY)
+                self.snapshotView?.center = CGPoint(x: cellRect.midX, y: cellRect.midY)
             },
             completion: { _ in
                 if case let .ready(snapshotRow) = self.reorderState, let row = snapshotRow {
@@ -257,7 +278,7 @@ public class ReorderController: NSObject {
         animateSnapshotViewOut()
         clearAutoScrollDisplayLink()
         
-        delegate?.tableViewDidFinishReordering(tableView, from: sourceRow, to: destinationRow)
+        delegate?.tableViewDidFinishReordering(tableView, from: context.sourceRow, to: context.destinationRow)
     }
     
     // MARK: - Spacer cell

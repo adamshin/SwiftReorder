@@ -25,22 +25,21 @@ import UIKit
 extension ReorderController {
     
     func createSnapshotViewForCell(at indexPath: IndexPath) {
-        guard let tableView = tableView else { return }
+        guard let tableView = tableView, let superview = tableView.superview else { return }
         
         removeSnapshotView()
         tableView.reloadData()
         
         guard let cell = tableView.cellForRow(at: indexPath) else { return }
+        let cellFrame = tableView.convert(cell.frame, to: superview)
         
         UIGraphicsBeginImageContextWithOptions(cell.bounds.size, false, 0)
-        
         cell.layer.render(in: UIGraphicsGetCurrentContext()!)
-        let image = UIGraphicsGetImageFromCurrentImageContext()
-        
+        let cellImage = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
         
-        let view = UIImageView(image: image)
-        view.frame = cell.frame
+        let view = UIImageView(image: cellImage)
+        view.frame = cellFrame
         
         view.layer.masksToBounds = false
         view.layer.opacity = Float(cellOpacity)
@@ -51,13 +50,19 @@ extension ReorderController {
         view.layer.shadowRadius = shadowRadius
         view.layer.shadowOffset = shadowOffset
         
-        tableView.addSubview(view)
+        superview.addSubview(view)
         snapshotView = view
     }
     
     func removeSnapshotView() {
         snapshotView?.removeFromSuperview()
         snapshotView = nil
+    }
+    
+    func updateSnapshotViewPosition() {
+        guard case .reordering(let context) = reorderState else { return }
+        
+        snapshotView?.center.y = context.touchPosition.y + context.snapshotOffset
     }
     
     func animateSnapshotViewIn() {
