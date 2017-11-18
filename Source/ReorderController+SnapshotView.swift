@@ -64,16 +64,15 @@ extension ReorderController {
         
         var newCenterY = context.touchPosition.y + context.snapshotOffset
         
-        // TODO: Double-check this
-        let safeArea: CGRect
+        let safeAreaFrame: CGRect
         if #available(iOS 11, *) {
-            safeArea = UIEdgeInsetsInsetRect(tableView.frame, tableView.safeAreaInsets)
+            safeAreaFrame = UIEdgeInsetsInsetRect(tableView.frame, tableView.safeAreaInsets)
         } else {
-            safeArea = tableView.frame
+            safeAreaFrame = UIEdgeInsetsInsetRect(tableView.frame, tableView.scrollIndicatorInsets)
         }
         
-        newCenterY = min(newCenterY, safeArea.maxY)
-        newCenterY = max(newCenterY, safeArea.minY)
+        newCenterY = min(newCenterY, safeAreaFrame.maxY)
+        newCenterY = max(newCenterY, safeAreaFrame.minY)
         
         snapshotView?.center.y = newCenterY
     }

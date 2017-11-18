@@ -37,15 +37,12 @@ extension ReorderController {
         
         guard autoScrollEnabled else { return 0 }
         
-        // TODO: Double-check this
-        let safeAreaInset: UIEdgeInsets
+        let safeAreaFrame: CGRect
         if #available(iOS 11, *) {
-            safeAreaInset = tableView.safeAreaInsets
+            safeAreaFrame = UIEdgeInsetsInsetRect(tableView.frame, tableView.safeAreaInsets)
         } else {
-            safeAreaInset = tableView.contentInset
+            safeAreaFrame = UIEdgeInsetsInsetRect(tableView.frame, tableView.scrollIndicatorInsets)
         }
-
-        let safeAreaFrame = UIEdgeInsetsInsetRect(tableView.frame, safeAreaInset)
         
         let distanceToTop = max(snapshotView.frame.minY - safeAreaFrame.minY, 0)
         let distanceToBottom = max(safeAreaFrame.maxY - snapshotView.frame.maxY, 0)
@@ -84,7 +81,6 @@ extension ReorderController {
                 let contentOffset = tableView.contentOffset
                 tableView.contentOffset = CGPoint(x: contentOffset.x, y: contentOffset.y + CGFloat(scrollDelta))
                 
-                // TODO: Double-check this
                 let contentInset: UIEdgeInsets
                 if #available(iOS 11, *) {
                     contentInset = tableView.adjustedContentInset
