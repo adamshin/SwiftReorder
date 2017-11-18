@@ -129,6 +129,9 @@ public class ReorderController: NSObject {
     /// The spacer cell style.
     public var spacerCellStyle: ReorderSpacerCellStyle = .automatic
     
+    /// Whether or not autoscrolling is enabled
+    public var autoScrollEnabled = true
+    
     /**
      Returns a `UITableViewCell` if the table view should display a spacer cell at the given index path.
      

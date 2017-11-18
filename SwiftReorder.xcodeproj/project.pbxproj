@@ -80,8 +80,7 @@
 				66FC50EF1D5EE49D00CFCCCE /* NonMovableViewController.swift */,
 				66FC50ED1D5EE49D00CFCCCE /* Info.plist */,
 			);
-			name = Example;
-			path = SwiftReorder;
+			path = Example;
 			sourceTree = "<group>";
 		};
 		660256A81CE6A72F0029CB5F /* Source */ = {

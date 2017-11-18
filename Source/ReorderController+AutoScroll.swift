@@ -35,6 +35,8 @@ extension ReorderController {
     func autoScrollVelocity() -> CGFloat {
         guard let tableView = tableView, let snapshotView = snapshotView else { return 0 }
         
+        guard autoScrollEnabled else { return 0 }
+        
         var actualContentInset = tableView.contentInset
         if #available(iOS 11, *) {
             actualContentInset.top += tableView.safeAreaInsets.top
