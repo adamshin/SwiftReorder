@@ -99,6 +99,11 @@ public class ReorderController: NSObject {
     /// The delegate of the reorder controller.
     public weak var delegate: TableViewReorderDelegate?
     
+    /// Whether reordering is enabled.
+    public var isEnabled: Bool = true {
+        didSet { reorderGestureRecognizer.isEnabled = isEnabled }
+    }
+    
     public var longPressDuration: TimeInterval = 0.3 {
         didSet {
             reorderGestureRecognizer.minimumPressDuration = longPressDuration
