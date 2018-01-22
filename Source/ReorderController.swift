@@ -58,6 +58,14 @@ public protocol TableViewReorderDelegate: class {
     func tableView(_ tableView: UITableView, canReorderRowAt indexPath: IndexPath) -> Bool
     
     /**
+     When attempting to move a row from a sourceIndexPath to a proposedDestinationIndexPath, asks the reorder delegate what the actual targetIndexPath should be. This allows the reorder delegate to selectively allow or modify reordering between sections or groups of rows, for example.
+     - Parameter tableView: The table view requesting this information.
+     - Parameter sourceIndexPath: The original index path of the row to be moved.
+     - Parameter proposedDestinationIndexPath: The potential index path of the row's new location.
+     */
+    func tableView(_ tableView: UITableView, targetIndexPathForMoveFromRowAt sourceIndexPath: IndexPath, to proposedDestinationIndexPath: IndexPath) -> IndexPath
+
+    /**
      Tells the delegate that the user has begun reordering a row.
      - Parameter tableView: The table view providing this information.
      */
@@ -79,6 +87,10 @@ public extension TableViewReorderDelegate {
         return true
     }
     
+    func tableView(_ tableView: UITableView, targetIndexPathForMoveFromRowAt sourceIndexPath: IndexPath, to proposedDestinationIndexPath: IndexPath) -> IndexPath {
+        return proposedDestinationIndexPath
+    }
+
     func tableViewDidBeginReordering(_ tableView: UITableView) {
     }
     
