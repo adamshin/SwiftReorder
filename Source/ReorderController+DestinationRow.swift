@@ -35,7 +35,7 @@ extension ReorderController {
     func updateDestinationRow() {
         guard case .reordering(let context) = reorderState,
             let tableView = tableView,
-            let proposedNewDestinationRow = newDestinationRow(),
+            let proposedNewDestinationRow = proposedNewDestinationRow(),
             let newDestinationRow = delegate?.tableView(tableView, targetIndexPathForMoveFromRowAt: context.sourceRow, to: proposedNewDestinationRow),
             newDestinationRow != context.destinationRow
         else { return }
@@ -52,7 +52,7 @@ extension ReorderController {
         tableView.endUpdates()
     }
     
-    func newDestinationRow() -> IndexPath? {
+    func proposedNewDestinationRow() -> IndexPath? {
         guard case .reordering(let context) = reorderState,
             let tableView = tableView,
             let superview = tableView.superview,
