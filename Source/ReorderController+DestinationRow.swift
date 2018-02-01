@@ -33,24 +33,31 @@ extension CGRect {
 extension ReorderController {
     
     func updateDestinationRow() {
-        /*
-        guard case .reordering(let context) = reorderState,
+        guard let reorderContext = reorderContext,
             let tableView = tableView,
-            let newDestinationRow = newDestinationRow(),
-            newDestinationRow != context.destinationRow
+            let selectedCellProxy = selectedCellProxy
         else { return }
         
-        var newContext = context
-        newContext.destinationRow = newDestinationRow
-        reorderState = .reordering(context: newContext)
+        // TODO: Use proper destination row logic
+        guard let newDestinationRow = tableView.indexPathForRow(at: selectedCellProxy.center) else { return }
         
-        delegate?.tableView(tableView, reorderRowAt: context.destinationRow, to: newContext.destinationRow)
+        // Update cell proxies
+        let proxyHeight = selectedCellProxy.bounds.height
         
-        tableView.beginUpdates()
-        tableView.deleteRows(at: [context.destinationRow], with: .fade)
-        tableView.insertRows(at: [newContext.destinationRow], with: .fade)
-        tableView.endUpdates()
-         */
+        for (indexPath, proxy) in cellProxies {
+            if reorderContext.sourceRow < indexPath && indexPath <= newDestinationRow {
+                proxy.transform = CGAffineTransform(translationX: 0, y: -proxyHeight)
+            }
+            else if reorderContext.sourceRow > indexPath && indexPath >= newDestinationRow {
+                proxy.transform = CGAffineTransform(translationX: 0, y: proxyHeight)
+            }
+            else {
+                proxy.transform = .identity
+            }
+        }
+        
+        // Update context
+        reorderContext.destinationRow = newDestinationRow
     }
     
     /*

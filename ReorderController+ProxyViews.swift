@@ -30,15 +30,11 @@ extension ReorderController {
     // MARK: - Cell Hiding
     
     func hideVisibleCells() {
-        for cell in tableView?.visibleCells ?? [] {
-            hideCell(cell)
-        }
+        tableView?.visibleCells.forEach(hideCell)
     }
     
     func unhideVisibleCells() {
-        for cell in tableView?.visibleCells ?? [] {
-            hideCell(cell)
-        }
+        tableView?.visibleCells.forEach(unhideCell)
     }
     
     func hideCell(_ cell: UITableViewCell) {

@@ -26,11 +26,15 @@ private let autoScrollThreshold: CGFloat = 30
 private let autoScrollMinVelocity: CGFloat = 60
 private let autoScrollMaxVelocity: CGFloat = 280
 
-private func mapValue(_ value: CGFloat, in rangeA: (min: CGFloat, max: CGFloat), to rangeB: (min: CGFloat, max: CGFloat)) -> CGFloat {
-    let rangeASize = rangeA.max - rangeA.min
-    let rangeBSize = rangeB.max - rangeB.min
+private func mapValue(_ value: CGFloat, in rangeA: (lower: CGFloat, upper: CGFloat), to rangeB: (lower: CGFloat, upper: CGFloat)) -> CGFloat {
+    let rangeASize = rangeA.upper - rangeA.lower
+    let rangeBSize = rangeB.upper - rangeB.lower
     
-    return rangeB.min + (rangeBSize * (value - rangeA.min) / rangeASize)
+    return rangeB.lower + (rangeBSize * (value - rangeA.lower) / rangeASize)
+}
+
+private func clamp(_ value: CGFloat, to range: (lower: CGFloat, upper: CGFloat)) -> CGFloat {
+    return min(max(value, range.lower), range.upper)
 }
 
 extension ReorderController {
@@ -38,8 +42,10 @@ extension ReorderController {
     func autoScrollVelocity() -> CGFloat {
         guard isAutoScrollEnabled,
             let tableView = tableView,
-            let cellProxy = selectedCellProxy
+            let selectedCellProxy = selectedCellProxy
         else { return 0 }
+        
+        let proxyRect = tableView.convert(selectedCellProxy.frame, to: tableView.superview)
         
         let safeAreaFrame: CGRect
         if #available(iOS 11, *) {
@@ -48,8 +54,8 @@ extension ReorderController {
             safeAreaFrame = UIEdgeInsetsInsetRect(tableView.frame, tableView.scrollIndicatorInsets)
         }
         
-        let distanceToTop = max(cellProxy.frame.minY - safeAreaFrame.minY, 0)
-        let distanceToBottom = max(safeAreaFrame.maxY - cellProxy.frame.maxY, 0)
+        let distanceToTop = max(proxyRect.minY - safeAreaFrame.minY, 0)
+        let distanceToBottom = max(safeAreaFrame.maxY - proxyRect.maxY, 0)
         
         if distanceToTop < autoScrollThreshold {
             return mapValue(distanceToTop, in: (autoScrollThreshold, 0), to: (-autoScrollMinVelocity, -autoScrollMaxVelocity))
@@ -73,18 +79,17 @@ extension ReorderController {
     }
 
     @objc func handleDisplayLinkUpdate(_ displayLink: CADisplayLink) {
-        guard let tableView = tableView else { return }
+        guard let tableView = tableView, let selectedCellProxy = selectedCellProxy else { return }
         
         if let lastAutoScrollTimeStamp = lastAutoScrollTimeStamp {
             let scrollVelocity = autoScrollVelocity()
             
             if scrollVelocity != 0 {
+                // Calculate scroll delta
                 let elapsedTime = displayLink.timestamp - lastAutoScrollTimeStamp
                 let scrollDelta = CGFloat(elapsedTime) * scrollVelocity
                 
-                let contentOffset = tableView.contentOffset
-                tableView.contentOffset = CGPoint(x: contentOffset.x, y: contentOffset.y + CGFloat(scrollDelta))
-                
+                // Calculate content offset bounds
                 let contentInset: UIEdgeInsets
                 if #available(iOS 11, *) {
                     contentInset = tableView.adjustedContentInset
@@ -95,11 +100,17 @@ extension ReorderController {
                 let minContentOffset = -contentInset.top
                 let maxContentOffset = tableView.contentSize.height - tableView.bounds.height + contentInset.bottom
                 
-                tableView.contentOffset.y = min(tableView.contentOffset.y, maxContentOffset)
-                tableView.contentOffset.y = max(tableView.contentOffset.y, minContentOffset)
+                // Calculate new content offset
+                let oldContentOffsetY = tableView.contentOffset.y
+                let newContentOffsetY = clamp(oldContentOffsetY + scrollDelta, to: (minContentOffset, maxContentOffset))
                 
-                // Don't think we need this here after all, now that the snapshot view is added to the table view's superview.
-//                updateSnapshotViewPosition()
+                // Scroll table view, maintaining position of selected cell proxy
+                tableView.contentOffset.y = newContentOffsetY
+                
+                let clampedScrollDelta = newContentOffsetY - oldContentOffsetY
+                selectedCellProxy.frame.origin.y += clampedScrollDelta
+                
+                // Recalculate destination row
                 updateDestinationRow()
             }
         }

@@ -11,6 +11,7 @@
 		6645976A20227D6100FF6B32 /* TableViewReorderDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6645976920227D6100FF6B32 /* TableViewReorderDelegate.swift */; };
 		6645976C2022840200FF6B32 /* ReorderController+State.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6645976B2022840200FF6B32 /* ReorderController+State.swift */; };
 		6645976E20228D9C00FF6B32 /* ReorderController+ProxyViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6645976D20228D9C00FF6B32 /* ReorderController+ProxyViews.swift */; };
+		664597702022A46C00FF6B32 /* ReorderController+Gesture.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6645976F2022A46C00FF6B32 /* ReorderController+Gesture.swift */; };
 		66DF25141D8080A000C19289 /* ReorderController+AutoScroll.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66DF25101D8080A000C19289 /* ReorderController+AutoScroll.swift */; };
 		66DF25151D8080A000C19289 /* ReorderController+DestinationRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66DF25111D8080A000C19289 /* ReorderController+DestinationRow.swift */; };
 		66DF25171D8080A000C19289 /* ReorderController+SnapshotView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66DF25131D8080A000C19289 /* ReorderController+SnapshotView.swift */; };
@@ -31,6 +32,7 @@
 		6645976920227D6100FF6B32 /* TableViewReorderDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableViewReorderDelegate.swift; sourceTree = "<group>"; };
 		6645976B2022840200FF6B32 /* ReorderController+State.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ReorderController+State.swift"; sourceTree = "<group>"; };
 		6645976D20228D9C00FF6B32 /* ReorderController+ProxyViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ReorderController+ProxyViews.swift"; sourceTree = "<group>"; };
+		6645976F2022A46C00FF6B32 /* ReorderController+Gesture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ReorderController+Gesture.swift"; sourceTree = "<group>"; };
 		66DF25101D8080A000C19289 /* ReorderController+AutoScroll.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "ReorderController+AutoScroll.swift"; path = "Source/ReorderController+AutoScroll.swift"; sourceTree = "<group>"; };
 		66DF25111D8080A000C19289 /* ReorderController+DestinationRow.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "ReorderController+DestinationRow.swift"; path = "Source/ReorderController+DestinationRow.swift"; sourceTree = "<group>"; };
 		66DF25131D8080A000C19289 /* ReorderController+SnapshotView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "ReorderController+SnapshotView.swift"; path = "Source/ReorderController+SnapshotView.swift"; sourceTree = "<group>"; };
@@ -96,6 +98,7 @@
 				66FC50FA1D5EE4CA00CFCCCE /* UITableView+Reorder.swift */,
 				6645976920227D6100FF6B32 /* TableViewReorderDelegate.swift */,
 				66FC50FC1D5EE4D600CFCCCE /* ReorderController.swift */,
+				6645976F2022A46C00FF6B32 /* ReorderController+Gesture.swift */,
 				6645976B2022840200FF6B32 /* ReorderController+State.swift */,
 				6645976D20228D9C00FF6B32 /* ReorderController+ProxyViews.swift */,
 				66DF25131D8080A000C19289 /* ReorderController+SnapshotView.swift */,
@@ -175,6 +178,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				6645976E20228D9C00FF6B32 /* ReorderController+ProxyViews.swift in Sources */,
+				664597702022A46C00FF6B32 /* ReorderController+Gesture.swift in Sources */,
 				66FC50F91D5EE49D00CFCCCE /* RootViewController.swift in Sources */,
 				66FC50FD1D5EE4D600CFCCCE /* ReorderController.swift in Sources */,
 				66DF25141D8080A000C19289 /* ReorderController+AutoScroll.swift in Sources */,

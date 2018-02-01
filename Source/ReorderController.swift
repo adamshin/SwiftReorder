@@ -22,11 +22,18 @@
 
 import UIKit
 
-struct ReorderContext {
+class ReorderContext {
+    
     var sourceRow: IndexPath
     var destinationRow: IndexPath
  
     var selectedCellTouchOffset: CGFloat
+    
+    init(sourceRow: IndexPath, destinationRow: IndexPath, selectedCellTouchOffset: CGFloat) {
+        self.sourceRow = sourceRow
+        self.destinationRow = destinationRow
+        self.selectedCellTouchOffset = selectedCellTouchOffset
+    }
 }
 
 /**
@@ -86,6 +93,7 @@ public class ReorderController: NSObject {
     
     lazy var reorderGestureRecognizer: UILongPressGestureRecognizer = {
         let gestureRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(handleReorderGesture))
+        gestureRecognizer.delegate = self
         gestureRecognizer.minimumPressDuration = self.longPressDuration
         return gestureRecognizer
     }()

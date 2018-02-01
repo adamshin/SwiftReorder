@@ -10,34 +10,12 @@ import UIKit
 
 extension ReorderController {
     
-    // MARK: - Gesture Handler
-    
-    @objc func handleReorderGesture(_ gestureRecognizer: UIGestureRecognizer) {
-        guard let tableView = tableView else { return }
-        
-        let touchPosition = gestureRecognizer.location(in: tableView)
-        
-        switch gestureRecognizer.state {
-        case .began:
-            beginReorder(touchPosition: touchPosition)
-            
-        case .changed:
-            updateReorder(touchPosition: touchPosition)
-            
-        case .ended, .cancelled, .failed, .possible:
-            endReorder()
-        }
-    }
-    
-    // MARK: - State
-    
-    private func beginReorder(touchPosition: CGPoint) {
+    func beginReorder(touchPosition: CGPoint) {
         guard reorderContext == nil else { return }
 
-        guard let delegate = delegate, let tableView = tableView else { return }
+        guard let tableView = tableView else { return }
         
         guard let sourceRow = tableView.indexPathForRow(at: touchPosition),
-            delegate.tableView(tableView, canReorderRowAt: sourceRow),
             let sourceCell = tableView.cellForRow(at: sourceRow)
         else { return }
         
@@ -66,44 +44,42 @@ extension ReorderController {
 
         // TODO: Animate selected cell proxy to selected state
         
-        // TODO: activateAutoScrollDisplayLink()
-        
         // We're officially reordering now
         reorderContext = ReorderContext(
             sourceRow: sourceRow,
             destinationRow: sourceRow,
             selectedCellTouchOffset: selectedCellTouchOffset
         )
+        activateAutoScrollDisplayLink()
     }
     
-    private func updateReorder(touchPosition: CGPoint) {
+    func updateReorder(touchPosition: CGPoint) {
         guard let reorderContext = reorderContext else { return }
         
         // Update selected cell proxy position
         selectedCellProxy?.frame.origin.y = touchPosition.y + reorderContext.selectedCellTouchOffset
         
-        // TODO: Update destination row
+        // Update destination row
+        updateDestinationRow()
     }
     
-    private func endReorder() {
-        guard let reorderContext = reorderContext else { return }
+    func endReorder() {
+        guard let reorderContext = reorderContext, let tableView = tableView else { return }
         
-        // TODO: Animate out somehow
-        // TODO: After animation finishes:
-        //   Notify the delegate of changes
-        //   Reload table cells
+        self.reorderContext = nil
+        clearAutoScrollDisplayLink()
         
-        // Remove all the proxy views and unhide the cells
+        // TODO: Animate out
+        
+        delegate?.tableView(tableView, reorderRowAt: reorderContext.sourceRow, to: reorderContext.destinationRow)
+        tableView.reloadData()
+        
+        // Remove all the proxy views
         selectedCellProxy?.removeFromSuperview()
         selectedCellProxy = nil
         
         cellProxies.values.forEach { $0.removeFromSuperview() }
         cellProxies = [:]
-        
-        tableView?.visibleCells.forEach { unhideCell($0) }
-        
-        self.reorderContext = nil
-        // clearAutoScrollDisplayLink()
     }
     
 }
