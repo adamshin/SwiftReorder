@@ -33,6 +33,7 @@ extension CGRect {
 extension ReorderController {
     
     func updateDestinationRow() {
+        /*
         guard case .reordering(let context) = reorderState,
             let tableView = tableView,
             let newDestinationRow = newDestinationRow(),
@@ -49,8 +50,10 @@ extension ReorderController {
         tableView.deleteRows(at: [context.destinationRow], with: .fade)
         tableView.insertRows(at: [newContext.destinationRow], with: .fade)
         tableView.endUpdates()
+         */
     }
     
+    /*
     func newDestinationRow() -> IndexPath? {
         guard case .reordering(let context) = reorderState,
             let tableView = tableView,
@@ -121,6 +124,7 @@ extension ReorderController {
         let availableSnapDistances = snapDistances.filter { delegate.tableView(tableView, canReorderRowAt: $0.path) != false }
         return availableSnapDistances.min(by: { $0.distance < $1.distance })?.path
     }
+     */
     
     func rectForEmptySection(_ section: Int) -> CGRect {
         guard let tableView = tableView else { return .zero }

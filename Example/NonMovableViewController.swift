@@ -65,9 +65,9 @@ extension NonMovableViewController {
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        if let spacer = tableView.reorder.spacerCell(for: indexPath) {
-            return spacer
-        }
+//        if let spacer = tableView.reorder.spacerCell(for: indexPath) {
+//            return spacer
+//        }
         
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
         cell.backgroundColor = .white

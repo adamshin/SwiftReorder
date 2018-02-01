@@ -22,17 +22,25 @@
 
 import UIKit
 
+private enum Row: Int {
+    case newTest
+    case basic
+    case grouped
+    case longList
+    case nonMovable
+    case effects
+}
+
+private let rows: [Row] = [
+    .newTest,
+    .basic,
+    .grouped,
+    .longList,
+    .nonMovable,
+    .effects,
+]
+
 class RootViewController: UITableViewController {
-    
-    enum Row: Int {
-        case basic = 0
-        case grouped
-        case longList
-        case nonMovable
-        case effects
-        
-        case count
-    }
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -55,25 +63,19 @@ class RootViewController: UITableViewController {
 extension RootViewController {
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return Row.count.rawValue
+        return rows.count
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
         
-        switch Row(rawValue: indexPath.row) ?? .count {
-        case .basic:
-            cell.textLabel?.text = "Basic"
-        case .grouped:
-            cell.textLabel?.text = "Grouped"
-        case .longList:
-            cell.textLabel?.text = "Long List"
-        case .nonMovable:
-            cell.textLabel?.text = "Non-Movable"
-        case .effects:
-            cell.textLabel?.text = "Effects"
-        case .count:
-            break
+        switch rows[indexPath.row] {
+            case .newTest: cell.textLabel?.text = "New Test"
+            case .basic: cell.textLabel?.text = "Basic"
+            case .grouped: cell.textLabel?.text = "Grouped"
+            case .longList: cell.textLabel?.text = "Long List"
+            case .nonMovable: cell.textLabel?.text = "Non-Movable"
+            case .effects: cell.textLabel?.text = "Effects"
         }
         
         cell.accessoryType = .disclosureIndicator
@@ -81,19 +83,13 @@ extension RootViewController {
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        switch Row(rawValue: indexPath.row) ?? .count {
-        case .basic:
-            navigationController?.pushViewController(BasicViewController(), animated: true)
-        case .grouped:
-            navigationController?.pushViewController(GroupedViewController(), animated: true)
-        case .longList:
-            navigationController?.pushViewController(LongListViewController(), animated: true)
-        case .nonMovable:
-            navigationController?.pushViewController(NonMovableViewController(), animated: true)
-        case .effects:
-            navigationController?.pushViewController(EffectsViewController(), animated: true)
-        case .count:
-            break
+        switch rows[indexPath.row] {
+        case .newTest: navigationController?.pushViewController(NewTestViewController(), animated: true)
+        case .basic: navigationController?.pushViewController(BasicViewController(), animated: true)
+        case .grouped: navigationController?.pushViewController(GroupedViewController(), animated: true)
+        case .longList: navigationController?.pushViewController(LongListViewController(), animated: true)
+        case .nonMovable: navigationController?.pushViewController(NonMovableViewController(), animated: true)
+        case .effects: navigationController?.pushViewController(EffectsViewController(), animated: true)
         }
     }
     

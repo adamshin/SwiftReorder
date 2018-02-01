@@ -26,16 +26,20 @@ private let autoScrollThreshold: CGFloat = 30
 private let autoScrollMinVelocity: CGFloat = 60
 private let autoScrollMaxVelocity: CGFloat = 280
 
-private func mapValue(_ value: CGFloat, inRangeWithMin minA: CGFloat, max maxA: CGFloat, toRangeWithMin minB: CGFloat, max maxB: CGFloat) -> CGFloat {
-    return (value - minA) * (maxB - minB) / (maxA - minA) + minB
+private func mapValue(_ value: CGFloat, in rangeA: (min: CGFloat, max: CGFloat), to rangeB: (min: CGFloat, max: CGFloat)) -> CGFloat {
+    let rangeASize = rangeA.max - rangeA.min
+    let rangeBSize = rangeB.max - rangeB.min
+    
+    return rangeB.min + (rangeBSize * (value - rangeA.min) / rangeASize)
 }
 
 extension ReorderController {
     
     func autoScrollVelocity() -> CGFloat {
-        guard let tableView = tableView, let snapshotView = snapshotView else { return 0 }
-        
-        guard autoScrollEnabled else { return 0 }
+        guard isAutoScrollEnabled,
+            let tableView = tableView,
+            let cellProxy = selectedCellProxy
+        else { return 0 }
         
         let safeAreaFrame: CGRect
         if #available(iOS 11, *) {
@@ -44,14 +48,14 @@ extension ReorderController {
             safeAreaFrame = UIEdgeInsetsInsetRect(tableView.frame, tableView.scrollIndicatorInsets)
         }
         
-        let distanceToTop = max(snapshotView.frame.minY - safeAreaFrame.minY, 0)
-        let distanceToBottom = max(safeAreaFrame.maxY - snapshotView.frame.maxY, 0)
+        let distanceToTop = max(cellProxy.frame.minY - safeAreaFrame.minY, 0)
+        let distanceToBottom = max(safeAreaFrame.maxY - cellProxy.frame.maxY, 0)
         
         if distanceToTop < autoScrollThreshold {
-            return mapValue(distanceToTop, inRangeWithMin: autoScrollThreshold, max: 0, toRangeWithMin: -autoScrollMinVelocity, max: -autoScrollMaxVelocity)
+            return mapValue(distanceToTop, in: (autoScrollThreshold, 0), to: (-autoScrollMinVelocity, -autoScrollMaxVelocity))
         }
         if distanceToBottom < autoScrollThreshold {
-            return mapValue(distanceToBottom, inRangeWithMin: autoScrollThreshold, max: 0, toRangeWithMin: autoScrollMinVelocity, max: autoScrollMaxVelocity)
+            return mapValue(distanceToBottom, in: (autoScrollThreshold, 0), to: (autoScrollMinVelocity, autoScrollMaxVelocity))
         }
         return 0
     }
@@ -94,7 +98,8 @@ extension ReorderController {
                 tableView.contentOffset.y = min(tableView.contentOffset.y, maxContentOffset)
                 tableView.contentOffset.y = max(tableView.contentOffset.y, minContentOffset)
                 
-                updateSnapshotViewPosition()
+                // Don't think we need this here after all, now that the snapshot view is added to the table view's superview.
+//                updateSnapshotViewPosition()
                 updateDestinationRow()
             }
         }
