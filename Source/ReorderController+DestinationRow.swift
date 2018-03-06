@@ -56,7 +56,6 @@ extension ReorderController {
         guard case .reordering(let context) = reorderState,
             let tableView = tableView,
             let superview = tableView.superview,
-            let delegate = delegate,
             let snapshotView = snapshotView
         else { return nil }
         
