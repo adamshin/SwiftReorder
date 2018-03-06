@@ -35,7 +35,8 @@ extension ReorderController {
     func updateDestinationRow() {
         guard case .reordering(let context) = reorderState,
             let tableView = tableView,
-            let newDestinationRow = newDestinationRow(),
+            let proposedNewDestinationRow = proposedNewDestinationRow(),
+            let newDestinationRow = delegate?.tableView(tableView, targetIndexPathForReorderFromRowAt: context.destinationRow, to: proposedNewDestinationRow),
             newDestinationRow != context.destinationRow
         else { return }
         
@@ -51,7 +52,7 @@ extension ReorderController {
         tableView.endUpdates()
     }
     
-    func newDestinationRow() -> IndexPath? {
+    func proposedNewDestinationRow() -> IndexPath? {
         guard case .reordering(let context) = reorderState,
             let tableView = tableView,
             let superview = tableView.superview,
@@ -118,8 +119,7 @@ extension ReorderController {
         }
         
         let snapDistances = rowSnapDistances + sectionSnapDistances
-        let availableSnapDistances = snapDistances.filter { delegate.tableView(tableView, canReorderRowAt: $0.path) != false }
-        return availableSnapDistances.min(by: { $0.distance < $1.distance })?.path
+        return snapDistances.min(by: { $0.distance < $1.distance })?.path
     }
     
     func rectForEmptySection(_ section: Int) -> CGRect {
