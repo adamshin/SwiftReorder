@@ -68,8 +68,9 @@ public protocol TableViewReorderDelegate: class {
     /**
      Tells the delegate that the user has begun reordering a row.
      - Parameter tableView: The table view providing this information.
+     - Parameter indexPath: The index path of the selected row.
      */
-    func tableViewDidBeginReordering(_ tableView: UITableView)
+    func tableViewDidBeginReordering(_ tableView: UITableView, at indexPath: IndexPath)
     
     /**
      Tells the delegate that the user has finished reordering.
@@ -91,7 +92,7 @@ public extension TableViewReorderDelegate {
         return proposedDestinationIndexPath
     }
 
-    func tableViewDidBeginReordering(_ tableView: UITableView) {
+    func tableViewDidBeginReordering(_ tableView: UITableView, at indexPath: IndexPath) {
     }
     
     func tableViewDidFinishReordering(_ tableView: UITableView, from initialSourceIndexPath: IndexPath, to finalDestinationIndexPath:IndexPath) {
@@ -246,7 +247,7 @@ public class ReorderController: NSObject {
         )
         reorderState = .reordering(context: context)
 
-        delegate.tableViewDidBeginReordering(tableView)
+        delegate.tableViewDidBeginReordering(tableView, at: sourceRow)
     }
     
     func updateReorder(touchPosition: CGPoint) {
