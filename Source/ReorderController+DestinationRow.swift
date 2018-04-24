@@ -87,7 +87,7 @@ extension ReorderController {
         }
         
         let sectionIndexes = 0..<tableView.numberOfSections
-        let sectionSnapDistances = sectionIndexes.flatMap { section -> (path: IndexPath, distance: CGFloat)? in
+        let sectionSnapDistances = sectionIndexes.compactMap { section -> (path: IndexPath, distance: CGFloat)? in
             let rowsInSection = tableView.numberOfRows(inSection: section)
             
             if section > context.destinationRow.section {
