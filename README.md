@@ -21,6 +21,26 @@ To integrate SwiftReorder into your Xcode project using CocoaPods, specify it in
 pod 'SwiftReorder', '~> 5.0'
 ```
 
+### Carthage
+
+To integrate SwiftReorder into your Xcode project using Carthage, specify it in your `Cartfile`:
+
+```
+github "adamshin/SwiftReorder" ~> 5.0
+```
+
+Remember to [add SwiftReorder to your Carthage build phase](https://github.com/Carthage/Carthage#if-youre-building-for-ios-tvos-or-watchos):
+
+```
+$(SRCROOT)/Carthage/Build/iOS/SwiftReorder.framework
+```
+
+and
+
+```
+$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/SwiftReorder.framework
+```
+
 ### Manually
 
 You can integrate SwiftReorder into your project manually by copying the contents of the `Source` folder into your project.
