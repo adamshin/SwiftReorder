@@ -21,6 +21,7 @@
 //
 
 import UIKit
+import SwiftReorder
 
 class EffectsViewController: UITableViewController {
     
