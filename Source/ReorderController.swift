@@ -123,6 +123,12 @@ public class ReorderController: NSObject {
         }
     }
     
+    public var cancelsTouchesInView: Bool = false {
+        didSet {
+            reorderGestureRecognizer.cancelsTouchesInView = cancelsTouchesInView
+        }
+    }
+    
     /// The duration of the cell selection animation.
     public var animationDuration: TimeInterval = 0.2
     
