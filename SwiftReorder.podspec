@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name = 'SwiftReorder'
-  s.version = '5.0.0'
+  s.version = '6.0.0'
   s.license = 'MIT'
   s.summary = 'Easy drag-and-drop reordering for UITableViews'
   s.homepage = 'https://github.com/adamshin/SwiftReorder'
