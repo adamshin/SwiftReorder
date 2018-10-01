@@ -6,6 +6,7 @@ Pod::Spec.new do |s|
   s.homepage = 'https://github.com/adamshin/SwiftReorder'
   s.author = 'Adam Shin'
   
+  s.swift_version = '4.2'
   s.platform = :ios, '8.0'
   
   s.source = { :git => 'https://github.com/adamshin/SwiftReorder.git', :tag => s.version }
