@@ -125,7 +125,7 @@ extension ReorderController {
         guard let tableView = tableView else { return .zero }
         
         let sectionRect = tableView.rectForHeader(inSection: section)
-        return UIEdgeInsetsInsetRect(sectionRect, UIEdgeInsets(top: sectionRect.height, left: 0, bottom: 0, right: 0))
+        return sectionRect.inset(by: UIEdgeInsets(top: sectionRect.height, left: 0, bottom: 0, right: 0))
     }
     
 }
