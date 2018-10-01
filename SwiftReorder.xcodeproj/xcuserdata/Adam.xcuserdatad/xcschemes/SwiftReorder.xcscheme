@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "0930"
+   LastUpgradeVersion = "1000"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -15,8 +15,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "660256921CE6A5170029CB5F"
-               BuildableName = "SwiftReorder.app"
-               BlueprintName = "SwiftReorder"
+               BuildableName = "SwiftReorderExample.app"
+               BlueprintName = "SwiftReorderExample"
                ReferencedContainer = "container:SwiftReorder.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -43,8 +43,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "660256921CE6A5170029CB5F"
-            BuildableName = "SwiftReorder.app"
-            BlueprintName = "SwiftReorder"
+            BuildableName = "SwiftReorderExample.app"
+            BlueprintName = "SwiftReorderExample"
             ReferencedContainer = "container:SwiftReorder.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -66,8 +66,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "660256921CE6A5170029CB5F"
-            BuildableName = "SwiftReorder.app"
-            BlueprintName = "SwiftReorder"
+            BuildableName = "SwiftReorderExample.app"
+            BlueprintName = "SwiftReorderExample"
             ReferencedContainer = "container:SwiftReorder.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -85,8 +85,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "660256921CE6A5170029CB5F"
-            BuildableName = "SwiftReorder.app"
-            BlueprintName = "SwiftReorder"
+            BuildableName = "SwiftReorderExample.app"
+            BlueprintName = "SwiftReorderExample"
             ReferencedContainer = "container:SwiftReorder.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
