@@ -14,6 +14,7 @@
 		66FC50F71D5EE49D00CFCCCE /* LongListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66FC50EE1D5EE49D00CFCCCE /* LongListViewController.swift */; };
 		66FC50F81D5EE49D00CFCCCE /* NonMovableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66FC50EF1D5EE49D00CFCCCE /* NonMovableViewController.swift */; };
 		66FC50F91D5EE49D00CFCCCE /* RootViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66FC50F01D5EE49D00CFCCCE /* RootViewController.swift */; };
+		AB6E455C21A82AAD00D47CFC /* CustomCellsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB6E455B21A82AAD00D47CFC /* CustomCellsController.swift */; };
 		D9DAD5E12134663E00484E71 /* SwiftReorder.h in Headers */ = {isa = PBXBuildFile; fileRef = D9DAD5DF2134663E00484E71 /* SwiftReorder.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D9DAD5E42134663E00484E71 /* SwiftReorder.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D9DAD5DD2134663E00484E71 /* SwiftReorder.framework */; };
 		D9DAD5E52134663E00484E71 /* SwiftReorder.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = D9DAD5DD2134663E00484E71 /* SwiftReorder.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -65,6 +66,7 @@
 		66FC50F01D5EE49D00CFCCCE /* RootViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RootViewController.swift; path = Example/RootViewController.swift; sourceTree = SOURCE_ROOT; };
 		66FC50FA1D5EE4CA00CFCCCE /* UITableView+Reorder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "UITableView+Reorder.swift"; path = "Source/UITableView+Reorder.swift"; sourceTree = "<group>"; };
 		66FC50FC1D5EE4D600CFCCCE /* ReorderController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ReorderController.swift; path = Source/ReorderController.swift; sourceTree = "<group>"; };
+		AB6E455B21A82AAD00D47CFC /* CustomCellsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomCellsController.swift; sourceTree = "<group>"; };
 		D9DAD5DD2134663E00484E71 /* SwiftReorder.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SwiftReorder.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D9DAD5DF2134663E00484E71 /* SwiftReorder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SwiftReorder.h; sourceTree = "<group>"; };
 		D9DAD5E02134663E00484E71 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -115,9 +117,10 @@
 				66FC50F01D5EE49D00CFCCCE /* RootViewController.swift */,
 				66FC50E91D5EE49D00CFCCCE /* BasicViewController.swift */,
 				66FC50EC1D5EE49D00CFCCCE /* GroupedViewController.swift */,
-				66FC50EB1D5EE49D00CFCCCE /* EffectsViewController.swift */,
 				66FC50EE1D5EE49D00CFCCCE /* LongListViewController.swift */,
 				66FC50EF1D5EE49D00CFCCCE /* NonMovableViewController.swift */,
+				66FC50EB1D5EE49D00CFCCCE /* EffectsViewController.swift */,
+				AB6E455B21A82AAD00D47CFC /* CustomCellsController.swift */,
 				66FC50ED1D5EE49D00CFCCCE /* Info.plist */,
 			);
 			path = Example;
@@ -259,6 +262,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				66FC50F91D5EE49D00CFCCCE /* RootViewController.swift in Sources */,
+				AB6E455C21A82AAD00D47CFC /* CustomCellsController.swift in Sources */,
 				66FC50F81D5EE49D00CFCCCE /* NonMovableViewController.swift in Sources */,
 				66FC50F11D5EE49D00CFCCCE /* AppDelegate.swift in Sources */,
 				66FC50F71D5EE49D00CFCCCE /* LongListViewController.swift in Sources */,

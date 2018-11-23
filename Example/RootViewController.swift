@@ -30,6 +30,7 @@ class RootViewController: UITableViewController {
         case longList
         case nonMovable
         case effects
+        case customCells
         
         case count
     }
@@ -72,6 +73,8 @@ extension RootViewController {
             cell.textLabel?.text = "Non-Movable"
         case .effects:
             cell.textLabel?.text = "Effects"
+        case .customCells:
+            cell.textLabel?.text = "Custom Cells"
         case .count:
             break
         }
@@ -92,6 +95,8 @@ extension RootViewController {
             navigationController?.pushViewController(NonMovableViewController(), animated: true)
         case .effects:
             navigationController?.pushViewController(EffectsViewController(), animated: true)
+        case .customCells:
+            navigationController?.pushViewController(CustomCellsController(), animated: true)
         case .count:
             break
         }
