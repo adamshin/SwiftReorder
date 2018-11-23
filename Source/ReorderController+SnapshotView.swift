@@ -28,7 +28,7 @@ extension ReorderController {
         guard let tableView = tableView, let superview = tableView.superview else { return }
         
         removeSnapshotView()
-        tableView.reloadData()
+        tableView.reloadRows(at: [indexPath], with: .fade)
         
         guard let cell = tableView.cellForRow(at: indexPath) else { return }
         let cellFrame = tableView.convert(cell.frame, to: superview)
