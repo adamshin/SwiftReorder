@@ -96,7 +96,7 @@ extension RootViewController {
         case .effects:
             navigationController?.pushViewController(EffectsViewController(), animated: true)
         case .customCells:
-            navigationController?.pushViewController(CustomCellsController(), animated: true)
+            navigationController?.pushViewController(CustomCellsViewController(), animated: true)
         case .count:
             break
         }
