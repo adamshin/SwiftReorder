@@ -39,7 +39,7 @@ extension ReorderController {
         
         let safeAreaFrame: CGRect
         if #available(iOS 11, *) {
-            safeAreaFrame = tableView.frame.inset(by: tableView.safeAreaInsets)
+            safeAreaFrame = tableView.frame.inset(by: tableView.adjustedContentInset)
         } else {
             safeAreaFrame = tableView.frame.inset(by: tableView.scrollIndicatorInsets)
         }
