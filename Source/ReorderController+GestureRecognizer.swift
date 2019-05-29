@@ -34,10 +34,10 @@ extension ReorderController {
             beginReorder(touchPosition: touchPosition)
             
         case .changed:
-            updateReorder(touchPosition: touchPosition)
+            updateReorder(touchPosition: touchPosition, gestureRecognizer: gestureRecognizer)
             
         case .ended, .cancelled, .failed, .possible:
-            endReorder()
+            endReorder(gestureRecognizer: gestureRecognizer)
         @unknown default: break
         }
     }

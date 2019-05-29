@@ -31,6 +31,7 @@ class RootViewController: UITableViewController {
         case nonMovable
         case effects
         case customCells
+        case deletable
         
         case count
     }
@@ -75,6 +76,8 @@ extension RootViewController {
             cell.textLabel?.text = "Effects"
         case .customCells:
             cell.textLabel?.text = "Custom Cells"
+        case .deletable:
+            cell.textLabel?.text = "Deletable Cells"
         case .count:
             break
         }
@@ -97,6 +100,8 @@ extension RootViewController {
             navigationController?.pushViewController(EffectsViewController(), animated: true)
         case .customCells:
             navigationController?.pushViewController(CustomCellsViewController(), animated: true)
+        case .deletable:
+            navigationController?.pushViewController(DeletableViewController(), animated: true)
         case .count:
             break
         }
