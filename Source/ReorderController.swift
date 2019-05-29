@@ -196,9 +196,9 @@ public class ReorderController: NSObject {
      Call this method at the beginning of your `tableView(_:cellForRowAt:)`, like so:
      ```
      func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-     if let spacer = tableView.reorder.spacerCell(for: indexPath) {
-     return spacer
-     }
+         if let spacer = tableView.reorder.spacerCell(for: indexPath) {
+             return spacer
+         }
      
          // ...
      }
