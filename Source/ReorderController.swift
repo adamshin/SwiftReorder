@@ -336,25 +336,25 @@ public class ReorderController: NSObject {
         }
         
         UIView.animate(withDuration: animationDuration,
-                       animations: {
-                        self.snapshotView?.center = CGPoint(x: cellRect.midX, y: cellRect.midY)
-        },
-                       completion: { _ in
-                        if case let .ready(snapshotRow) = self.reorderState, let row = snapshotRow {
-                            self.reorderState = .ready(snapshotRow: nil)
-                            
-                            if let rowCount = tableView.dataSource?.tableView(tableView, numberOfRowsInSection: row.section),
-                                rowCount > row.row {
-                                // else the row has been removed during the animation and calling
-                                // the following would crash
-                                UIView.performWithoutAnimation {
-                                    tableView.reloadRows(at: [row], with: .none)
-                                }
-                            }
-                            
-                            self.removeSnapshotView()
+            animations: {
+                self.snapshotView?.center = CGPoint(x: cellRect.midX, y: cellRect.midY)
+            },
+            completion: { _ in
+                if case let .ready(snapshotRow) = self.reorderState, let row = snapshotRow {
+                    self.reorderState = .ready(snapshotRow: nil)
+                    
+                    if let rowCount = tableView.dataSource?.tableView(tableView, numberOfRowsInSection: row.section),
+                        rowCount > row.row {
+                        // else the row has been removed during the animation and calling
+                        // the following would crash
+                        UIView.performWithoutAnimation {
+                            tableView.reloadRows(at: [row], with: .none)
                         }
-        }
+                    }
+                    
+                    self.removeSnapshotView()
+                }
+            }
         )
         animateSnapshotViewOut()
         clearAutoScrollDisplayLink()
