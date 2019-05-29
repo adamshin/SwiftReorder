@@ -84,8 +84,9 @@ public protocol TableViewReorderDelegate: class {
      Tells the delegate that the user has finished reordering and that the row was deleted.
      - Parameter tableView: The table view providing this information.
      - Parameter initialSourceIndexPath: The initial index path of the selected row, before reordering began.
+     - Parameter lastIndexPath: The last index path of cell before it got deleted
      */
-    func tableViewDidFinishReorderingWithDeletion(_ tableView: UITableView, from initialSourceIndexPath: IndexPath)
+    func tableViewDidFinishReorderingWithDeletion(_ tableView: UITableView, from initialSourceIndexPath: IndexPath, last lastIndexPath: IndexPath)
     
     /**
      Tells the delegate that the user has moved the cell
@@ -127,7 +128,7 @@ public extension TableViewReorderDelegate {
         return false
     }
     
-    func tableViewDidFinishReorderingWithDeletion(_ tableView: UITableView, from initialSourceIndexPath: IndexPath) {
+    func tableViewDidFinishReorderingWithDeletion(_ tableView: UITableView, from initialSourceIndexPath: IndexPath, last lastIndexPath: IndexPath) {
     }
 }
 
@@ -331,6 +332,7 @@ public class ReorderController: NSObject {
                 
                 UIView.performWithoutAnimation {
                     tableView.deleteRows(at: [context.destinationRow], with: .none)
+                    delegate?.tableViewDidFinishReorderingWithDeletion(tableView, from: context.sourceRow, last: context.destinationRow)
                 }
                 return
         }

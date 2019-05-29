@@ -156,4 +156,12 @@ extension DeletableViewController: TableViewReorderDelegate {
     func tableViewDidMoveCell(_ tableView: UITableView, with gestureRecognizer: UIGestureRecognizer) {
         handleCellMove(with: gestureRecognizer)
     }
+    
+    func tableViewDidFinishReordering(_ tableView: UITableView, from initialSourceIndexPath: IndexPath, to finalDestinationIndexPath: IndexPath) {
+        removeDeleteButton()
+    }
+    
+    func tableViewDidFinishReorderingWithDeletion(_ tableView: UITableView, from initialSourceIndexPath: IndexPath, last lastIndexPath: IndexPath) {
+        removeDeleteButton()
+    }
 }
