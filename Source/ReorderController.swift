@@ -331,8 +331,8 @@ public class ReorderController: NSObject {
                 reorderState = .ready(snapshotRow: nil)
                 
                 UIView.performWithoutAnimation {
-                    tableView.deleteRows(at: [context.destinationRow], with: .none)
                     delegate?.tableViewDidFinishReorderingWithDeletion(tableView, from: context.sourceRow, last: context.destinationRow)
+                    tableView.deleteRows(at: [context.destinationRow], with: .none)
                 }
                 return
         }

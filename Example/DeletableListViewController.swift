@@ -147,7 +147,6 @@ extension DeletableViewController: TableViewReorderDelegate {
             return false
         }
         if deletionRatio > 0.5 {
-            items.remove(at: finalDestinationIndexPath.row)
             return true
         }
         return false
@@ -162,6 +161,7 @@ extension DeletableViewController: TableViewReorderDelegate {
     }
     
     func tableViewDidFinishReorderingWithDeletion(_ tableView: UITableView, from initialSourceIndexPath: IndexPath, last lastIndexPath: IndexPath) {
+        items.remove(at: finalDestinationIndexPath.row)
         removeDeleteButton()
     }
 }
