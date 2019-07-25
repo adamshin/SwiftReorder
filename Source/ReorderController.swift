@@ -29,7 +29,7 @@ import UIKit
  - Hidden: The spacer cell is hidden, and the separator line is not visible.
  - Transparent: The spacer cell is given a transparent background color, and the separator line is visible.
  */
-@objc public enum ReorderSpacerCellStyle: Int {
+public enum ReorderSpacerCellStyle {
     case automatic
     case hidden
     case transparent
@@ -40,7 +40,7 @@ import UIKit
 /**
  The delegate of a `ReorderController` must adopt the `TableViewReorderDelegate` protocol. This protocol defines methods for handling the reordering of rows.
  */
-@objc public protocol TableViewReorderDelegate: class {
+public protocol TableViewReorderDelegate: class {
     
     /**
      Tells the delegate that the user has moved a row from one location to another. Use this method to update your data source.
