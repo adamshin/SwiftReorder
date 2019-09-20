@@ -25,6 +25,13 @@ class ContextMenuViewController: UITableViewController, UIContextMenuInteraction
     
     var items = (1...10).map { "Item \($0)" }
     
+    private var impactFeedbackgenerator : AnyObject? {
+        if #available(iOS 10, *) {
+            return UIImpactFeedbackGenerator(style: .light)
+        }
+        return nil
+    }
+    
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -41,6 +48,11 @@ class ContextMenuViewController: UITableViewController, UIContextMenuInteraction
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
         tableView.allowsSelection = false
         tableView.reorder.delegate = self
+        
+        if #available(iOS 13.0, *) {
+            tableView.reorder.longPressDuration = 0.09
+            tableView.reorder.animationDuration = 0.1
+        }
     }
     
     @available(iOS 13.0, *)
@@ -53,28 +65,14 @@ class ContextMenuViewController: UITableViewController, UIContextMenuInteraction
     
     @available(iOS 13.0, *)
     private func makeContextMenu() -> UIMenu {
-        
-        // More extensive than it needs to be, but helpful for showing options.
 
-        let rename = UIAction(title: "Rename", image: UIImage(systemName: "square.and.pencil")) { action in
-            // Show rename UI
-        }
-
-        // Here we specify the "destructive" attribute to show that it’s destructive in nature
         let delete = UIAction(title: "Delete", image: UIImage(systemName: "trash"), attributes: .destructive) { action in
-            // Delete this photo 😢
         }
 
-        // The "title" will show up as an action for opening this menu
-        let edit = UIMenu(title: "Edit...", children: [rename, delete])
-        
-        // Create a UIAction for sharing
         let share = UIAction(title: "Share", image: UIImage(systemName: "square.and.arrow.up")) { action in
-            // Show system share sheet
         }
 
-        // Create our menu with both the edit menu and the share action
-        return UIMenu(title: "Main Menu", children: [edit, share])
+        return UIMenu(title: "Main Menu", children: [delete, share])
     }
 
 }
@@ -112,6 +110,16 @@ extension ContextMenuViewController: TableViewReorderDelegate {
         let item = items[sourceIndexPath.row]
         items.remove(at: sourceIndexPath.row)
         items.insert(item, at: destinationIndexPath.row)
+        if #available(iOS 10, *) {
+            impactFeedbackgenerator!.impactOccurred()
+        }
+        
     }
     
+    func tableView(_ tableView: UITableView, canReorderRowAt indexPath: IndexPath) -> Bool {
+        if #available(iOS 10, *) {
+            impactFeedbackgenerator!.impactOccurred()
+        }
+        return true
+    }
 }
