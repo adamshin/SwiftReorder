@@ -21,7 +21,7 @@
 import UIKit
 import SwiftReorder
 
-class ContextMenuViewController: UITableViewController, UIContextMenuInteractionDelegate {
+class ContextMenuViewController: UITableViewController {
     
     var items = (1...10).map { "Item \($0)" }
     
@@ -43,7 +43,7 @@ class ContextMenuViewController: UITableViewController, UIContextMenuInteraction
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        title = "Basic"
+        title = "Context Menu"
 
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
         tableView.allowsSelection = false
@@ -54,7 +54,9 @@ class ContextMenuViewController: UITableViewController, UIContextMenuInteraction
             tableView.reorder.animationDuration = 0.1
         }
     }
-    
+}
+
+extension ContextMenuViewController: UIContextMenuInteractionDelegate {
     @available(iOS 13.0, *)
     func contextMenuInteraction(_ interaction: UIContextMenuInteraction, configurationForMenuAtLocation location: CGPoint) -> UIContextMenuConfiguration? {
         
@@ -74,7 +76,6 @@ class ContextMenuViewController: UITableViewController, UIContextMenuInteraction
 
         return UIMenu(title: "Main Menu", children: [delete, share])
     }
-
 }
 
 extension ContextMenuViewController {
