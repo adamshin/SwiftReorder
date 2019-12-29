@@ -50,6 +50,25 @@ private final class SelfResizableTableView: UITableView {
         
         return intrinsicContentSize
     }
+    
+    // ******************************* MARK: - Initialization and Setup
+    
+    required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+        setup()
+    }
+    
+    override init(frame: CGRect, style: UITableView.Style) {
+        super.init(frame: frame, style: style)
+        setup()
+    }
+    
+    func setup() {
+        isScrollEnabled = false
+        bounces = false
+        alwaysBounceVertical = false
+        alwaysBounceHorizontal = false
+    }
 }
 
 private extension UIView {
