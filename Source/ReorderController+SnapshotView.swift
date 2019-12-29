@@ -25,7 +25,7 @@ import UIKit
 extension ReorderController {
     
     func createSnapshotViewForCell(at indexPath: IndexPath) {
-        guard let tableView = tableView, let superview = tableView.superview else { return }
+        guard let tableView = tableView, let scrollSource = scrollSource, let superview = scrollSource.superview else { return }
         
         removeSnapshotView()
         tableView.reloadRows(at: [indexPath], with: .none)
@@ -60,15 +60,15 @@ extension ReorderController {
     }
     
     func updateSnapshotViewPosition() {
-        guard case .reordering(let context) = reorderState, let tableView = tableView else { return }
+        guard case .reordering(let context) = reorderState, let scrollSource = scrollSource else { return }
         
         var newCenterY = context.touchPosition.y + context.snapshotOffset
         
         let safeAreaFrame: CGRect
         if #available(iOS 11, *) {
-            safeAreaFrame = tableView.frame.inset(by: tableView.safeAreaInsets)
+            safeAreaFrame = scrollSource.frame.inset(by: scrollSource.safeAreaInsets)
         } else {
-            safeAreaFrame = tableView.frame.inset(by: tableView.scrollIndicatorInsets)
+            safeAreaFrame = scrollSource.frame.inset(by: scrollSource.scrollIndicatorInsets)
         }
         
         newCenterY = min(newCenterY, safeAreaFrame.maxY)

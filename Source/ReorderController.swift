@@ -227,7 +227,8 @@ public class ReorderController: NSObject {
         guard case .ready = reorderState,
             let delegate = delegate,
             let tableView = tableView,
-            let superview = tableView.superview
+            let scrollSource = scrollSource,
+            let superview = scrollSource.superview
         else { return }
         
         let tableTouchPosition = superview.convert(touchPosition, to: tableView)
@@ -269,7 +270,8 @@ public class ReorderController: NSObject {
     func endReorder() {
         guard case .reordering(let context) = reorderState,
             let tableView = tableView,
-            let superview = tableView.superview
+            let scrollSource = scrollSource,
+            let superview = scrollSource.superview
         else { return }
         
         reorderState = .ready(snapshotRow: context.destinationRow)
@@ -338,4 +340,79 @@ public class ReorderController: NSObject {
         return cell
     }
     
+}
+
+// ******************************* MARK: - Scroll Source
+
+private extension UIView {
+    var _viewController: UIViewController? {
+        var nextResponder: UIResponder? = self
+        while nextResponder != nil {
+            nextResponder = nextResponder?.next
+            
+            if let viewController = nextResponder as? UIViewController {
+                return viewController
+            }
+        }
+        
+        return nil
+    }
+}
+
+private extension UIScrollView {
+    var _isScrollable: Bool {
+        guard isScrollEnabled else { return false }
+        
+        if #available(iOS 11.0, *) {
+            switch contentInsetAdjustmentBehavior {
+            case .always:
+                return bounds.height < contentSize.height + adjustedContentInset.top + adjustedContentInset.bottom
+                
+            case .never:
+                return bounds.height < contentSize.height + contentInset.top + contentInset.bottom
+                
+            case .scrollableAxes:
+                if isScrollEnabled || alwaysBounceVertical {
+                    return bounds.height < contentSize.height + adjustedContentInset.top + adjustedContentInset.bottom
+                } else {
+                    return bounds.height < contentSize.height + contentInset.top + contentInset.bottom
+                }
+            
+            case .automatic:
+                if let _ = _viewController?.navigationController {
+                    return bounds.height < contentSize.height + adjustedContentInset.top + adjustedContentInset.bottom
+                } else {
+                    return bounds.height < contentSize.height + contentInset.top + contentInset.bottom
+                }
+                
+            @unknown default:
+                return false
+            }
+            
+        } else {
+            return bounds.height < contentSize.height + contentInset.top + contentInset.bottom
+        }
+    }
+}
+
+extension ReorderController {
+    
+    /// Actuall scrolling source. May differ from `tableView`.
+    var scrollSource: UIScrollView? {
+        guard let tableView = tableView else { return nil }
+        
+        if !tableView._isScrollable {
+            // Try to find another scroll source
+            var superview: UIView = tableView
+            while let nextSuperview = superview.superview {
+                if let scrollView = nextSuperview as? UIScrollView, scrollView._isScrollable {
+                    return scrollView
+                }
+                
+                superview = nextSuperview
+            }
+        }
+        
+        return tableView
+    }
 }

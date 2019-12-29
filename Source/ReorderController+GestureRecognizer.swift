@@ -25,7 +25,7 @@ import UIKit
 extension ReorderController {
 
     @objc internal func handleReorderGesture(_ gestureRecognizer: UIGestureRecognizer) {
-        guard let superview = tableView?.superview else { return }
+        guard let scrollSource = scrollSource, let superview = scrollSource.superview else { return }
         
         let touchPosition = gestureRecognizer.location(in: superview)
         

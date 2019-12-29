@@ -55,7 +55,8 @@ extension ReorderController {
     func proposedNewDestinationRow() -> IndexPath? {
         guard case .reordering(let context) = reorderState,
             let tableView = tableView,
-            let superview = tableView.superview,
+            let scrollSource = scrollSource,
+            let superview = scrollSource.superview,
             let snapshotView = snapshotView
         else { return nil }
         
