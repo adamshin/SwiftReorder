@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0D89230323B8B3EE004F625D /* OuterScrollingSourceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D89230223B8B3EE004F625D /* OuterScrollingSourceViewController.swift */; };
 		66FC50F11D5EE49D00CFCCCE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66FC50E81D5EE49D00CFCCCE /* AppDelegate.swift */; };
 		66FC50F21D5EE49D00CFCCCE /* BasicViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66FC50E91D5EE49D00CFCCCE /* BasicViewController.swift */; };
 		66FC50F41D5EE49D00CFCCCE /* EffectsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66FC50EB1D5EE49D00CFCCCE /* EffectsViewController.swift */; };
@@ -51,6 +52,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		0D89230223B8B3EE004F625D /* OuterScrollingSourceViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OuterScrollingSourceViewController.swift; sourceTree = "<group>"; };
 		660256931CE6A5170029CB5F /* SwiftReorderExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SwiftReorderExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		66DF25101D8080A000C19289 /* ReorderController+AutoScroll.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "ReorderController+AutoScroll.swift"; path = "Source/ReorderController+AutoScroll.swift"; sourceTree = "<group>"; };
 		66DF25111D8080A000C19289 /* ReorderController+DestinationRow.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "ReorderController+DestinationRow.swift"; path = "Source/ReorderController+DestinationRow.swift"; sourceTree = "<group>"; };
@@ -114,13 +116,14 @@
 			isa = PBXGroup;
 			children = (
 				66FC50E81D5EE49D00CFCCCE /* AppDelegate.swift */,
-				66FC50F01D5EE49D00CFCCCE /* RootViewController.swift */,
 				66FC50E91D5EE49D00CFCCCE /* BasicViewController.swift */,
+				AB6E455B21A82AAD00D47CFC /* CustomCellsViewController.swift */,
+				66FC50EB1D5EE49D00CFCCCE /* EffectsViewController.swift */,
 				66FC50EC1D5EE49D00CFCCCE /* GroupedViewController.swift */,
 				66FC50EE1D5EE49D00CFCCCE /* LongListViewController.swift */,
 				66FC50EF1D5EE49D00CFCCCE /* NonMovableViewController.swift */,
-				66FC50EB1D5EE49D00CFCCCE /* EffectsViewController.swift */,
-				AB6E455B21A82AAD00D47CFC /* CustomCellsViewController.swift */,
+				0D89230223B8B3EE004F625D /* OuterScrollingSourceViewController.swift */,
+				66FC50F01D5EE49D00CFCCCE /* RootViewController.swift */,
 				66FC50ED1D5EE49D00CFCCCE /* Info.plist */,
 			);
 			path = Example;
@@ -264,6 +267,7 @@
 			files = (
 				66FC50F91D5EE49D00CFCCCE /* RootViewController.swift in Sources */,
 				AB6E455C21A82AAD00D47CFC /* CustomCellsViewController.swift in Sources */,
+				0D89230323B8B3EE004F625D /* OuterScrollingSourceViewController.swift in Sources */,
 				66FC50F81D5EE49D00CFCCCE /* NonMovableViewController.swift in Sources */,
 				66FC50F11D5EE49D00CFCCCE /* AppDelegate.swift in Sources */,
 				66FC50F71D5EE49D00CFCCCE /* LongListViewController.swift in Sources */,
