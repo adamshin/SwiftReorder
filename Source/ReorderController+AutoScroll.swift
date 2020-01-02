@@ -22,10 +22,6 @@
 
 import UIKit
 
-private let autoScrollThreshold: CGFloat = 30
-private let autoScrollMinVelocity: CGFloat = 60
-private let autoScrollMaxVelocity: CGFloat = 280
-
 private func mapValue(_ value: CGFloat, inRangeWithMin minA: CGFloat, max maxA: CGFloat, toRangeWithMin minB: CGFloat, max maxB: CGFloat) -> CGFloat {
     return (value - minA) * (maxB - minB) / (maxA - minA) + minB
 }

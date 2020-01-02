@@ -156,6 +156,15 @@ public class ReorderController: NSObject {
     /// Whether or not autoscrolling is enabled
     public var autoScrollEnabled = true
     
+    /// Auto scroll threshold
+    public var autoScrollThreshold: CGFloat = 30
+    
+    /// Auto scroll minimum velocity
+    public var autoScrollMinVelocity: CGFloat = 60
+    
+    /// Auto scroll maximum velocity
+    public var autoScrollMaxVelocity: CGFloat = 280
+    
     /**
      Returns a `UITableViewCell` if the table view should display a spacer cell at the given index path.
      
