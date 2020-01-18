@@ -23,9 +23,21 @@
 import UIKit
 import SwiftReorder
 
+private extension String {
+    
+    /// Generates random string with spaces.
+    static func random(length: Int, averageWordLength: Int? = nil) -> String {
+        let letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+        let spacesCount = averageWordLength == nil ? 0 : letters.count / averageWordLength!
+        let lettersWithSpace = letters.appending(String(repeating: " ", count: spacesCount))
+        return String((0..<length).map{ _ in lettersWithSpace.randomElement()! })
+    }
+}
+
+
 class LongListViewController: UITableViewController {
     
-    var items = (1...50).map { "Item \($0)" }
+    var items = (1...10000).map { _ in String.random(length: Int.random(in: 0...200), averageWordLength: 5) }
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -41,6 +53,8 @@ class LongListViewController: UITableViewController {
         title = "Long List"
         
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
+        tableView.estimatedRowHeight = 44
+        tableView.rowHeight = UITableView.automaticDimension
         tableView.allowsSelection = false
         tableView.reorder.delegate = self
     }
@@ -60,6 +74,7 @@ extension LongListViewController {
         
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
         cell.textLabel?.text = items[indexPath.row]
+        cell.textLabel?.numberOfLines = 0
         
         return cell
     }
