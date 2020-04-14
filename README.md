@@ -1,5 +1,7 @@
 # SwiftReorder
 
+**NOTE: Some users have encountered compatibility issues when using this library with recent versions of iOS. For apps targeting iOS 11 and up, it's recommended to use the built-in [UITableView drag and drop API](https://developer.apple.com/documentation/uikit/views_and_controls/table_views/supporting_drag_and_drop_in_table_views) instead.**
+
 SwiftReorder is a UITableView extension that lets you add long-press drag-and-drop reordering to any table view. It's robust, lightweight, and fully customizable.
 
 ![Demo](Resources/demo.gif)
