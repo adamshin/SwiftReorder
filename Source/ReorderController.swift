@@ -183,14 +183,14 @@ public class ReorderController: NSObject {
     
     // MARK: - Internal state
     
-    struct ReorderContext {
+    struct ReorderContext: Equatable {
         var sourceRow: IndexPath
         var destinationRow: IndexPath
         var snapshotOffset: CGFloat
         var touchPosition: CGPoint
     }
     
-    enum ReorderState {
+    enum ReorderState: Equatable {
         case ready(snapshotRow: IndexPath?)
         case reordering(context: ReorderContext)
     }
@@ -233,6 +233,7 @@ public class ReorderController: NSObject {
         let tableTouchPosition = superview.convert(touchPosition, to: tableView)
         
         guard let sourceRow = tableView.indexPathForRow(at: tableTouchPosition),
+            let sourceCell = tableView.cellForRow(at: sourceRow),
             delegate.tableView(tableView, canReorderRowAt: sourceRow)
         else { return }
         
@@ -240,7 +241,17 @@ public class ReorderController: NSObject {
         animateSnapshotViewIn()
         activateAutoScrollDisplayLink()
         
-        tableView.reloadData()
+        reorderState = .ready(snapshotRow: sourceRow)
+        tableView.reloadRows(at: [sourceRow], with: .none)
+        
+        // So after I started to use `reloadRows` instead of `reloadData` I faced with
+        // strange animation glitches that was caused by too damn smart UITableView
+        // wasn't removing previous cell while I was dragging during `animateSnapshotViewIn`
+        // animation. Not easy to reproduce though because need a good timing when you already dragging
+        // and recognizer decides that it's a good time to begin. Anyway, was able to fix it with removing
+        // previous cell manually. Ah yes I switched to `reloadRows` to fix cells reordering when there are like
+        // thousands of cells.
+        sourceCell.removeFromSuperview()
         
         let snapshotOffset = (snapshotView?.center.y ?? 0) - touchPosition.y
         
@@ -312,15 +323,19 @@ public class ReorderController: NSObject {
         let cell = UITableViewCell()
         let height = snapshotView.bounds.height
         
-        NSLayoutConstraint(
-            item: cell,
+        let constraint = NSLayoutConstraint(
+            item: cell.contentView,
             attribute: .height,
             relatedBy: .equal,
             toItem: nil,
             attribute: .notAnAttribute,
             multiplier: 0,
             constant: height
-        ).isActive = true
+        )
+        
+        // Prevent broken constraints
+        constraint.priority = .init(999)
+        constraint.isActive = true
         
         let hideCell: Bool
         switch spacerCellStyle {
