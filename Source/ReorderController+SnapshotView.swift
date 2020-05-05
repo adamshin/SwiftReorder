@@ -31,6 +31,7 @@ extension ReorderController {
         tableView.reloadRows(at: [indexPath], with: .none)
         
         guard let cell = tableView.cellForRow(at: indexPath) else { return }
+        cell.subviews.forEach { $0.layer.masksToBounds = true }
         let cellFrame = tableView.convert(cell.frame, to: superview)
         
         UIGraphicsBeginImageContextWithOptions(cell.bounds.size, false, 0)
