@@ -73,13 +73,36 @@ public protocol TableViewReorderDelegate: class {
     func tableViewDidBeginReordering(_ tableView: UITableView, at indexPath: IndexPath)
     
     /**
-     Tells the delegate that the user has finished reordering.
+     Tells the delegate that the user has finished reordering and that the row was moved.
      - Parameter tableView: The table view providing this information.
      - Parameter initialSourceIndexPath: The initial index path of the selected row, before reordering began.
      - Parameter finalDestinationIndexPath: The final index path of the selected row.
      */
     func tableViewDidFinishReordering(_ tableView: UITableView, from initialSourceIndexPath: IndexPath, to finalDestinationIndexPath: IndexPath)
     
+    /**
+     Tells the delegate that the user has finished reordering and that the row was deleted.
+     - Parameter tableView: The table view providing this information.
+     - Parameter initialSourceIndexPath: The initial index path of the selected row, before reordering began.
+     - Parameter lastIndexPath: The last index path of cell before it got deleted
+     */
+    func tableViewDidFinishReorderingWithDeletion(_ tableView: UITableView, from initialSourceIndexPath: IndexPath, last lastIndexPath: IndexPath)
+    
+    /**
+     Tells the delegate that the user has moved the cell
+     - Parameter tableView: The table view providing this information.
+     - Parameter gestureRecognizer: The user gesture that moved the cell.
+     */
+    func tableViewDidMoveCell(_ tableView: UITableView, with gestureRecognizer: UIGestureRecognizer)
+    
+    /**
+     Asks the delegate whether the cell should be deleted
+     - Parameter tableView: The table view providing this information.
+     - Parameter initialSourceIndexPath: The initial index path of the selected row, before reordering began.
+     - Parameter finalDestinationIndexPath: The current index path of the selected row.
+     - Parameter gestureRecognizer: The user gesture that moved the cell and has now ended.
+     */
+    func tableViewShouldRemoveCell(_ tableView: UITableView, from initialSourceIndexPath: IndexPath, to finalDestinationIndexPath: IndexPath, with gestureRecognizer: UIGestureRecognizer) -> Bool
 }
 
 public extension TableViewReorderDelegate {
@@ -98,6 +121,15 @@ public extension TableViewReorderDelegate {
     func tableViewDidFinishReordering(_ tableView: UITableView, from initialSourceIndexPath: IndexPath, to finalDestinationIndexPath:IndexPath) {
     }
     
+    func tableViewDidMoveCell(_ tableView: UITableView, with gestureRecognizer: UIGestureRecognizer) {
+    }
+    
+    func tableViewShouldRemoveCell(_ tableView: UITableView, from initialSourceIndexPath: IndexPath, to finalDestinationIndexPath: IndexPath, with gestureRecognizer: UIGestureRecognizer) -> Bool {
+        return false
+    }
+    
+    func tableViewDidFinishReorderingWithDeletion(_ tableView: UITableView, from initialSourceIndexPath: IndexPath, last lastIndexPath: IndexPath) {
+    }
 }
 
 // MARK: - ReorderController
@@ -156,6 +188,9 @@ public class ReorderController: NSObject {
     /// Whether or not autoscrolling is enabled
     public var autoScrollEnabled = true
     
+    /// The view used to represent the cell being reordered
+    public internal(set) var snapshotView: UIView? = nil
+    
     /**
      Returns a `UITableViewCell` if the table view should display a spacer cell at the given index path.
      
@@ -198,7 +233,6 @@ public class ReorderController: NSObject {
     weak var tableView: UITableView?
     
     var reorderState: ReorderState = .ready(snapshotRow: nil)
-    var snapshotView: UIView? = nil
     
     var autoScrollDisplayLink: CADisplayLink?
     var lastAutoScrollTimeStamp: CFTimeInterval?
@@ -255,8 +289,8 @@ public class ReorderController: NSObject {
         delegate.tableViewDidBeginReordering(tableView, at: sourceRow)
     }
     
-    func updateReorder(touchPosition: CGPoint) {
-        guard case .reordering(let context) = reorderState else { return }
+    func updateReorder(touchPosition: CGPoint, gestureRecognizer: UIGestureRecognizer) {
+        guard case .reordering(let context) = reorderState, let tableView = tableView else { return }
         
         var newContext = context
         newContext.touchPosition = touchPosition
@@ -264,9 +298,11 @@ public class ReorderController: NSObject {
         
         updateSnapshotViewPosition()
         updateDestinationRow()
+        
+        delegate?.tableViewDidMoveCell(tableView, with: gestureRecognizer)
     }
     
-    func endReorder() {
+    func endReorder(gestureRecognizer: UIGestureRecognizer) {
         guard case .reordering(let context) = reorderState,
             let tableView = tableView,
             let superview = tableView.superview
@@ -284,6 +320,23 @@ public class ReorderController: NSObject {
             snapshotView?.center.y += 0.1
         }
         
+        guard delegate?.tableViewShouldRemoveCell(
+            tableView,
+            from: context.sourceRow,
+            to: context.destinationRow,
+            with: gestureRecognizer
+            ) != true else {
+                removeSnapshotView()
+                clearAutoScrollDisplayLink()
+                reorderState = .ready(snapshotRow: nil)
+                
+                UIView.performWithoutAnimation {
+                    delegate?.tableViewDidFinishReorderingWithDeletion(tableView, from: context.sourceRow, last: context.destinationRow)
+                    tableView.deleteRows(at: [context.destinationRow], with: .none)
+                }
+                return
+        }
+        
         UIView.animate(withDuration: animationDuration,
             animations: {
                 self.snapshotView?.center = CGPoint(x: cellRect.midX, y: cellRect.midY)
@@ -291,9 +344,16 @@ public class ReorderController: NSObject {
             completion: { _ in
                 if case let .ready(snapshotRow) = self.reorderState, let row = snapshotRow {
                     self.reorderState = .ready(snapshotRow: nil)
-                    UIView.performWithoutAnimation {
-                        tableView.reloadRows(at: [row], with: .none)
+                    
+                    if let rowCount = tableView.dataSource?.tableView(tableView, numberOfRowsInSection: row.section),
+                        rowCount > row.row {
+                        // else the row has been removed during the animation and calling
+                        // the following would crash
+                        UIView.performWithoutAnimation {
+                            tableView.reloadRows(at: [row], with: .none)
+                        }
                     }
+                    
                     self.removeSnapshotView()
                 }
             }
